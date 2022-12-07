@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        private readonly Calendar _calendar;
+        readonly Calendar _calendar;
 
         public CalendarSerializer()
             :this(new SerializationContext()) { }
@@ -18,16 +18,15 @@ namespace Ical.Net.Serialization
 
         public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
-        public virtual string SerializeToString() => SerializeToString(_calendar);
+        public string SerializeToString() => SerializeToString(_calendar);
 
         protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
         public override string SerializeToString(object obj)
         {
-            if (obj is Calendar)
+            if (obj is Calendar calendar)
             {
                 // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-                var calendar = (Calendar) obj;
                 calendar.Version = LibraryMetadata.Version;
                 calendar.ProductId = LibraryMetadata.ProdId;
 
@@ -39,7 +38,7 @@ namespace Ical.Net.Serialization
 
         public override object Deserialize(TextReader tr) => null;
 
-        private class CalendarPropertySorter : IComparer<ICalendarProperty>
+        class CalendarPropertySorter : IComparer<ICalendarProperty>
         {
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {

@@ -17,24 +17,17 @@ namespace Ical.Net.Evaluation
             // We're not sure if the object is a calendar object
             // or a calendar data type, so we need to assign
             // the associated object manually
-            if (obj is ICalendarObject)
+            if (obj is ICalendarObject calendarObject)
             {
-                AssociatedObject = (ICalendarObject) obj;
+                AssociatedObject = calendarObject;
             }
-            if (obj is ICalendarDataType)
+            if (obj is ICalendarDataType dt)
             {
-                var dt = (ICalendarDataType) obj;
                 AssociatedObject = dt.AssociatedObject;
             }
         }
 
-        /// <summary>
-        /// Evaulates the RRule component, and adds each specified Period to the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        /// <param name="includeReferenceDateInResults"></param>
+        /// <summary> Evaluates the RRule component, and adds each specified Period to the Periods collection. </summary>
         protected HashSet<Period> EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
@@ -42,8 +35,7 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            if (!(Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) is IEvaluator evaluator))
             {
                 return new HashSet<Period>();
             }
@@ -68,12 +60,7 @@ namespace Ical.Net.Evaluation
             return recurrences;
         }
 
-        /// <summary>
-        /// Evaulates the ExRule component, and excludes each specified DateTime from the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
+        /// <summary> Evaluates the ExRule component, and excludes each specified DateTime from the Periods collection. </summary>
         protected HashSet<Period> EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
@@ -81,8 +68,7 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            if (!(Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) is IEvaluator evaluator))
             {
                 return new HashSet<Period>();
             }
@@ -92,9 +78,7 @@ namespace Ical.Net.Evaluation
             return exRuleExclusions;
         }
 
-        /// <summary>
-        /// Evalates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
-        /// </summary>
+        /// <summary> Evaluates the ExDate component, and excludes each specified DateTime or Period from the Periods collection. </summary>
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
@@ -145,7 +129,7 @@ namespace Ical.Net.Evaluation
             return Periods;
         }
 
-        private HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
+        HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
         {
             var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => d.StartTime.Value.TimeOfDay == TimeSpan.Zero).Select(d => d.StartTime.Value));
             var overlaps = new HashSet<Period>(Periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));

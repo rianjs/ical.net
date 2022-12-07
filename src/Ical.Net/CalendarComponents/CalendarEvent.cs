@@ -58,7 +58,7 @@ namespace Ical.Net.CalendarComponents
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        public virtual IDateTime DtEnd
+        public IDateTime DtEnd
         {
             get => Properties.Get<IDateTime>("DTEND");
             set
@@ -92,7 +92,7 @@ namespace Ical.Net.CalendarComponents
         //
         // Therefore, Duration is not serialized, as DtEnd
         // should always be extrapolated from the duration.
-        public virtual TimeSpan Duration
+        public TimeSpan Duration
         {
             get => Properties.Get<TimeSpan>("DURATION");
             set
@@ -108,7 +108,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// An alias to the DtEnd field (i.e. end date/time).
         /// </summary>
-        public virtual IDateTime End
+        public IDateTime End
         {
             get => DtEnd;
             set => DtEnd = value;
@@ -117,7 +117,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Returns true if the event is an all-day event.
         /// </summary>
-        public virtual bool IsAllDay
+        public bool IsAllDay
         {
             get => !Start.HasTime;
             set
@@ -135,7 +135,7 @@ namespace Ical.Net.CalendarComponents
 
                 if (value && Start != null && End != null && Equals(Start.Date, End.Date))
                 {
-                    Duration = default(TimeSpan);
+                    Duration = default;
                     End = Start.AddDays(1);
                 }
             }
@@ -164,7 +164,7 @@ namespace Ical.Net.CalendarComponents
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public virtual IList<string> Resources
+        public IList<string> Resources
         {
             get => Properties.GetMany<string>("RESOURCES");
             set => Properties.Set("RESOURCES", value ?? new List<string>());
@@ -192,7 +192,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set(TransparencyType.Key, value);
         }
 
-        private EventEvaluator _mEvaluator;
+        EventEvaluator _mEvaluator;
 
         /// <summary>
         /// Constructs an Event object, with an iCalObject
@@ -203,7 +203,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Name = EventStatus.Name;
 
@@ -220,7 +220,7 @@ namespace Ical.Net.CalendarComponents
         /// </summary>
         /// <param name="dateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
-        public virtual bool OccursOn(IDateTime dateTime)
+        public bool OccursOn(IDateTime dateTime)
         {
             return _mEvaluator.Periods.Any(p => p.StartTime.Date == dateTime.Date || // It's the start date OR
                                                 (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
@@ -233,7 +233,7 @@ namespace Ical.Net.CalendarComponents
         /// </summary>
         /// <param name="dateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        public virtual bool OccursAt(IDateTime dateTime)
+        public bool OccursAt(IDateTime dateTime)
         {
             return _mEvaluator.Periods.Any(p => p.StartTime.Equals(dateTime));
         }
@@ -243,7 +243,7 @@ namespace Ical.Net.CalendarComponents
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        public virtual bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
+        public bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 
@@ -261,7 +261,7 @@ namespace Ical.Net.CalendarComponents
             ExtrapolateTimes(-1);
         }
 
-        private void ExtrapolateTimes(int source)
+        void ExtrapolateTimes(int source)
         {
             /*
 			 * Source values, a fix introduced to prevent stack overflow exceptions from occuring.
@@ -270,15 +270,15 @@ namespace Ical.Net.CalendarComponents
 			 *	  1 = Duration
 			 *	  2 = DtStart
 			 */
-            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
+            if (DtEnd == null && DtStart != null && Duration != default && source != 0)
             {
                 DtEnd = DtStart.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
+            else if (Duration == default && DtStart != null && DtEnd != null && source != 1)
             {
                 Duration = DtEnd.Subtract(DtStart);
             }
-            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null && source != 2)
+            else if (DtStart == null && Duration != default && DtEnd != null && source != 2)
             {
                 DtStart = DtEnd.Subtract(Duration);
             }

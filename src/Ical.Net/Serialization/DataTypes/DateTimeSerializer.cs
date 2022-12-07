@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public DateTimeSerializer(SerializationContext ctx) : base(ctx) { }
 
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        static DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
 
@@ -41,8 +41,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var dt = obj as IDateTime;
-            if (dt == null)
+            if (!(obj is IDateTime dt))
             {
                 return null;
             }
@@ -92,7 +91,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(dt, value.ToString());
         }
 
-        private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
+        const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
         internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
         internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
@@ -100,8 +99,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var dt = CreateAndAssociate() as IDateTime;
-            if (dt == null)
+            if (!(CreateAndAssociate() is IDateTime dt))
             {
                 return null;
             }

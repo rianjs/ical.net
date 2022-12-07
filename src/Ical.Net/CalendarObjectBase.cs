@@ -4,7 +4,7 @@ namespace Ical.Net
 {
     public class CalendarObjectBase : ICopyable, ILoadable
     {
-        private bool _mIsLoaded;
+        bool _mIsLoaded;
 
         public CalendarObjectBase()
         {
@@ -21,25 +21,25 @@ namespace Ical.Net
         /// Creates a copy of the object.
         /// </summary>
         /// <returns>The copy of the object.</returns>
-        public virtual T Copy<T>()
+        public T Copy<T>()
         {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
-            if (obj is T)
+            if (obj is T obj1)
             {
                 obj.CopyFrom(this);
-                return (T) obj;
+                return obj1;
             }
-            return default(T);
+            return default;
         }
 
-        public virtual bool IsLoaded => _mIsLoaded;
+        public bool IsLoaded => _mIsLoaded;
 
         public event EventHandler Loaded;
 
-        public virtual void OnLoaded()
+        public void OnLoaded()
         {
             _mIsLoaded = true;
             Loaded?.Invoke(this, EventArgs.Empty);

@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
-        private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
-        private DateTime _mEvaluationEndBounds = DateTime.MinValue;
+        DateTime _mEvaluationStartBounds = DateTime.MaxValue;
+        DateTime _mEvaluationEndBounds = DateTime.MinValue;
 
-        private ICalendarObject _mAssociatedObject;
-        private readonly ICalendarDataType _mAssociatedDataType;
+        ICalendarObject _mAssociatedObject;
+        readonly ICalendarDataType _mAssociatedDataType;
 
         protected HashSet<Period> MPeriods;
 
@@ -35,78 +34,40 @@ namespace Ical.Net.Evaluation
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Calendar = CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<Period>();
         }
 
-        protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
+        protected static IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
             IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
             newDt.AssociateWith(referenceDate);
             return newDt;
         }
 
-        protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
-        {
-            // FIXME: use a more specific exception.
-            if (interval == 0)
-            {
-                throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
-            }
-
-            var old = dt;
-            switch (pattern.Frequency)
-            {
-                case FrequencyType.Secondly:
-                    dt = old.AddSeconds(interval);
-                    break;
-                case FrequencyType.Minutely:
-                    dt = old.AddMinutes(interval);
-                    break;
-                case FrequencyType.Hourly:
-                    dt = old.AddHours(interval);
-                    break;
-                case FrequencyType.Daily:
-                    dt = old.AddDays(interval);
-                    break;
-                case FrequencyType.Weekly:
-                    dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek);
-                    break;
-                case FrequencyType.Monthly:
-                    dt = old.AddDays(-old.Day + 1).AddMonths(interval);
-                    break;
-                case FrequencyType.Yearly:
-                    dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
-                    break;
-                // FIXME: use a more specific exception.
-                default:
-                    throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
-            }
-        }
-
         public System.Globalization.Calendar Calendar { get; private set; }
 
-        public virtual DateTime EvaluationStartBounds
+        public DateTime EvaluationStartBounds
         {
             get => _mEvaluationStartBounds;
             set => _mEvaluationStartBounds = value;
         }
 
-        public virtual DateTime EvaluationEndBounds
+        public DateTime EvaluationEndBounds
         {
             get => _mEvaluationEndBounds;
             set => _mEvaluationEndBounds = value;
         }
 
-        public virtual ICalendarObject AssociatedObject
+        public ICalendarObject AssociatedObject
         {
             get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
             protected set => _mAssociatedObject = value;
         }
 
-        public virtual HashSet<Period> Periods => MPeriods;
+        public HashSet<Period> Periods => MPeriods;
 
         public virtual void Clear()
         {

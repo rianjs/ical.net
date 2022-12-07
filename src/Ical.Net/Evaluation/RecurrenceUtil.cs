@@ -19,8 +19,7 @@ namespace Ical.Net.Evaluation
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null || recurrable.Start == null)
+            if (!(recurrable.GetService(typeof(IEvaluator)) is IEvaluator evaluator) || recurrable.Start == null)
             {
                 return new HashSet<Occurrence>();
             }
@@ -35,7 +34,7 @@ namespace Ical.Net.Evaluation
             periodStart.TzId = start.TzId;
             periodEnd.TzId = start.TzId;
 
-            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+            var periods = evaluator.Evaluate(start, periodStart.GetSimpleDateTimeData(), periodEnd.GetSimpleDateTimeData(),
                 includeReferenceDateInResults);
 
             var otherOccurrences = from p in periods

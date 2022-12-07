@@ -10,11 +10,11 @@ namespace Ical.Net.DataTypes
     /// </summary>    
     public class Trigger : EncodableDataType
     {
-        private IDateTime _mDateTime;
-        private TimeSpan? _mDuration;
-        private string _mRelated = TriggerRelation.Start;
+        IDateTime _mDateTime;
+        TimeSpan? _mDuration;
+        string _mRelated = TriggerRelation.Start;
 
-        public virtual IDateTime DateTime
+        public IDateTime DateTime
         {
             get => _mDateTime;
             set
@@ -36,7 +36,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual TimeSpan? Duration
+        public TimeSpan? Duration
         {
             get => _mDuration;
             set
@@ -52,13 +52,13 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual string Related
+        public string Related
         {
             get => _mRelated;
             set => _mRelated = value;
         }
 
-        public virtual bool IsRelative => _mDuration != null;
+        public bool IsRelative => _mDuration != null;
 
         public Trigger() {}
 
@@ -76,15 +76,14 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is Trigger))
+            if (!(obj is Trigger trigger))
             {
                 return;
             }
 
-            var t = (Trigger) obj;
-            DateTime = t.DateTime;
-            Duration = t.Duration;
-            Related = t.Related;
+            DateTime = trigger.DateTime;
+            Duration = trigger.Duration;
+            Related = trigger.Related;
         }
 
         protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;

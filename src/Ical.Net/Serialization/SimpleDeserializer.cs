@@ -25,36 +25,46 @@ namespace Ical.Net.Serialization
             new SerializerFactory(),
             new CalendarComponentFactory());
 
-        private const string _nameGroup = "name";
-        private const string _valueGroup = "value";
-        private const string _paramNameGroup = "paramName";
-        private const string _paramValueGroup = "paramValue";
+        #region RegEx Group Names
 
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        const string _nameGroup = "name";
+        const string _valueGroup = "value";
+        const string _paramNameGroup = "paramName";
+        const string _paramValueGroup = "paramValue";
 
-        private readonly DataTypeMapper _dataTypeMapper;
-        private readonly ISerializerFactory _serializerFactory;
-        private readonly CalendarComponentFactory _componentFactory;
+        #endregion RegEx Group Names
 
-        private static string BuildContentLineRegex()
+        readonly DataTypeMapper _dataTypeMapper;
+        readonly ISerializerFactory _serializerFactory;
+        readonly CalendarComponentFactory _componentFactory;
+
+        /// <summary> Regular Expression for an Identifier </summary>
+        /// <remarks>
+        /// name          = iana-token / x-name
+        /// iana-token    = 1*(ALPHA / DIGIT / "-")
+        /// x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
+        /// vendorid      = 3*(ALPHA / DIGIT)
+        /// Added underscore to match behavior of bug 2033495
+        /// </remarks>
+        static readonly Regex identifier = new Regex("[-A-Za-z0-9_]+");
+
+        /// <summary> Regular Expression for a Parameter Value </summary>
+        /// <remarks>
+        /// param-value   = paramtext / quoted-string
+        /// paramtext     = *SAFE-CHAR
+        /// quoted-string = DQUOTE *QSAFE-CHAR DQUOTE
+        /// QSAFE-CHAR    = WSP / %x21 / %x23-7E / NON-US-ASCII
+        /// ; Any character except CONTROL and DQUOTE
+        /// SAFE-CHAR     = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E
+        ///               / NON-US-ASCII
+        /// ; Any character except CONTROL, DQUOTE, ";", ":", ","
+        /// </remarks>
+        static readonly string paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
+
+        static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+
+        static string BuildContentLineRegex()
         {
-            // name          = iana-token / x-name
-            // iana-token    = 1*(ALPHA / DIGIT / "-")
-            // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
-            // vendorid      = 3*(ALPHA / DIGIT)
-            // Add underscore to match behavior of bug 2033495
-            const string identifier = "[-A-Za-z0-9_]+";
-
-            // param-value   = paramtext / quoted-string
-            // paramtext     = *SAFE-CHAR
-            // quoted-string = DQUOTE *QSAFE-CHAR DQUOTE
-            // QSAFE-CHAR    = WSP / %x21 / %x23-7E / NON-US-ASCII
-            // ; Any character except CONTROL and DQUOTE
-            // SAFE-CHAR     = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E
-            //               / NON-US-ASCII
-            // ; Any character except CONTROL, DQUOTE, ";", ":", ","
-            var paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
-
             // param         = param-name "=" param-value *("," param-value)
             // param-name    = iana-token / x-name
             var paramName = $"(?<{_paramNameGroup}>{identifier})";
@@ -79,7 +89,7 @@ namespace Ical.Net.Serialization
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
                 {
                     stack.Push(current);
-                    current = _componentFactory.Build((string)contentLine.Value);
+                    current = CalendarComponentFactory.Build((string)contentLine.Value);
                     SerializationUtil.OnDeserializing(current);
                 }
                 else
@@ -118,7 +128,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private CalendarProperty ParseContentLine(SerializationContext context, string input)
+        CalendarProperty ParseContentLine(SerializationContext context, string input)
         {
             var match = _contentLineRegex.Match(input);
             if (!match.Success)
@@ -138,7 +148,7 @@ namespace Ical.Net.Serialization
             return property;
         }
 
-        private static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
+        static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
         {
             var paramValueIndex = 0;
             for (var paramNameIndex = 0; paramNameIndex < paramNames.Count; paramNameIndex++)
@@ -156,15 +166,14 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
+        void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
         {
             var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
             var serializer = (SerializerBase)_serializerFactory.Build(type, context);
             using (var valueReader = new StringReader(value))
             {
                 var propertyValue = serializer.Deserialize(valueReader);
-                var propertyValues = propertyValue as IEnumerable<string>;
-                if (propertyValues != null)
+                if (propertyValue is IEnumerable<string> propertyValues)
                 {
                     foreach (var singlePropertyValue in propertyValues)
                     {
@@ -178,7 +187,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private static IEnumerable<string> GetContentLines(TextReader reader)
+        static IEnumerable<string> GetContentLines(TextReader reader)
         {
             var currentLine = new StringBuilder();
             while (true)

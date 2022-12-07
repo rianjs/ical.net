@@ -17,13 +17,13 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class SerializationTests
     {
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+        static readonly DateTime _nowTime = DateTime.Now;
+        static readonly DateTime _later = _nowTime.AddHours(1);
+        static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+        static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+        static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
@@ -33,9 +33,7 @@ namespace Ical.Net.CoreUnitTests
 
             for (var i = 0; i < cal1.Children.Count; i++)
             {
-                var component1 = cal1.Children[i] as ICalendarComponent;
-                var component2 = cal2.Children[i] as ICalendarComponent;
-                if (component1 != null && component2 != null)
+                if (cal1.Children[i] is ICalendarComponent component1 && cal2.Children[i] is ICalendarComponent component2)
                 {
                     CompareComponents(component1, component2);
                 }
@@ -52,14 +50,14 @@ namespace Ical.Net.CoreUnitTests
                     try
                     {
                         Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
-                        if (p1.Value is IComparable)
+                        if (p1.Value is IComparable comparable)
                         {
-                            if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
+                            if (comparable.CompareTo(p2.Value) != 0)
                                 continue;
                         }
-                        else if (p1.Value is IEnumerable)
+                        else if (p1.Value is IEnumerable value)
                         {
-                            CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                            CompareEnumerables(value, (IEnumerable)p2.Value, p1.Name);
                         }
                         else
                         {
@@ -280,7 +278,7 @@ namespace Ical.Net.CoreUnitTests
                 });
         }
 
-        private static readonly IList<Attendee> _attendees = new List<Attendee>
+        static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {

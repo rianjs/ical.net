@@ -8,23 +8,23 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class RequestStatus : EncodableDataType
     {
-        private string _mDescription;
-        private string _mExtraData;
-        private StatusCode _mStatusCode;
+        string _mDescription;
+        string _mExtraData;
+        StatusCode _mStatusCode;
 
-        public virtual string Description
+        public string Description
         {
             get => _mDescription;
             set => _mDescription = value;
         }
 
-        public virtual string ExtraData
+        public string ExtraData
         {
             get => _mExtraData;
             set => _mExtraData = value;
         }
 
-        public virtual StatusCode StatusCode
+        public StatusCode StatusCode
         {
             get => _mStatusCode;
             set => _mStatusCode = value;
@@ -41,12 +41,11 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is RequestStatus))
+            if (!(obj is RequestStatus rs))
             {
                 return;
             }
 
-            var rs = (RequestStatus) obj;
             if (rs.StatusCode != null)
             {
                 StatusCode = rs.StatusCode;
