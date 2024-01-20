@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -9,22 +6,22 @@ using Ical.Net.Serialization;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.CoreUnitTests
+namespace Ical.Net.CoreUnitTests;
+
+public class SymmetricSerializationTests
 {
-    public class SymmetricSerializationTests
+    private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
+
+    private static readonly DateTime _nowTime = DateTime.Now;
+    private static readonly DateTime _later = _nowTime.AddHours(1);
+    private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
+    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+
+    [Test, TestCaseSource(nameof(Event_TestCases))]
+    public void Event_Tests(Calendar iCalendar)
     {
-        private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
-
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
-
-        [Test, TestCaseSource(nameof(Event_TestCases))]
-        public void Event_Tests(Calendar iCalendar)
-        {
             var originalEvent = iCalendar.Events.Single();
 
             var serializedCalendar = SerializeToString(iCalendar);
@@ -37,8 +34,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(iCalendar, unserializedCalendar);
         }
 
-        public static IEnumerable<ITestCaseData> Event_TestCases()
-        {
+    public static IEnumerable<ITestCaseData> Event_TestCases()
+    {
             var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 };
             var e = new CalendarEvent
             {
@@ -59,9 +56,9 @@ namespace Ical.Net.CoreUnitTests
             yield return new TestCaseData(calendar).SetName("Description serialization isn't working properly. Issue #60");
         }
 
-        [Test]
-        public void VTimeZoneSerialization_Test()
-        {
+    [Test]
+    public void VTimeZoneSerialization_Test()
+    {
             var originalCalendar = new Calendar();
             var tz = new VTimeZone
             {
@@ -77,9 +74,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(originalCalendar.GetHashCode(), unserializedCalendar.GetHashCode());
         }
 
-        [Test, TestCaseSource(nameof(AttendeeSerialization_TestCases))]
-        public void AttendeeSerialization_Test(Attendee attendee)
-        {
+    [Test, TestCaseSource(nameof(AttendeeSerialization_TestCases))]
+    public void AttendeeSerialization_Test(Attendee attendee)
+    {
             var calendar = new Calendar();
             calendar.AddTimeZone(new VTimeZone("America/Los_Angeles"));
             var someEvent = GetSimpleEvent();
@@ -94,8 +91,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(calendar, unserialized);
         }
 
-        public static IEnumerable<ITestCaseData> AttendeeSerialization_TestCases()
-        {
+    public static IEnumerable<ITestCaseData> AttendeeSerialization_TestCases()
+    {
             var complex1 = new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Accepted",
@@ -121,9 +118,9 @@ namespace Ical.Net.CoreUnitTests
             yield return new TestCaseData(simple).SetName("Simple attendee");
         }
 
-        [Test, TestCaseSource(nameof(BinaryAttachment_TestCases))]
-        public void BinaryAttachment_Tests(string theString, string expectedAttachment)
-        {
+    [Test, TestCaseSource(nameof(BinaryAttachment_TestCases))]
+    public void BinaryAttachment_Tests(string theString, string expectedAttachment)
+    {
             var asBytes = Encoding.UTF8.GetBytes(theString);
             var binaryAttachment = new Attachment(asBytes);
 
@@ -146,8 +143,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(calendar, unserialized);
         }
 
-        public static IEnumerable<ITestCaseData> BinaryAttachment_TestCases()
-        {
+    public static IEnumerable<ITestCaseData> BinaryAttachment_TestCases()
+    {
             const string shortString = "This is a string.";
             yield return new TestCaseData(shortString, shortString)
                 .SetName("Short string");
@@ -165,9 +162,9 @@ namespace Ical.Net.CoreUnitTests
             yield return new TestCaseData(jsonString, jsonString).SetName("JSON-serialized text");
         }
 
-        [Test, TestCaseSource(nameof(UriAttachment_TestCases))]
-        public void UriAttachment_Tests(string uri, Uri expectedUri)
-        {
+    [Test, TestCaseSource(nameof(UriAttachment_TestCases))]
+    public void UriAttachment_Tests(string uri, Uri expectedUri)
+    {
             var attachment = new Attachment(uri);
 
             var calendar = new Calendar();
@@ -189,8 +186,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(calendar, unserialized);
         }
 
-        public static IEnumerable<ITestCaseData> UriAttachment_TestCases()
-        {
+    public static IEnumerable<ITestCaseData> UriAttachment_TestCases()
+    {
             yield return new TestCaseData("http://www.google.com", new Uri("http://www.google.com")).SetName("HTTP URL");
             yield return new TestCaseData("mailto:rstockbower@gmail.com", new Uri("mailto:rstockbower@gmail.com")).SetName("mailto: URL");
             yield return new TestCaseData(_ldapUri, new Uri(_ldapUri)).SetName("ldap URL");
@@ -198,9 +195,9 @@ namespace Ical.Net.CoreUnitTests
             yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
         }
 
-        [Test, Ignore("TODO: Fix CATEGORIES multiple serializations")]
-        public void CategoriesTest()
-        {
+    [Test, Ignore("TODO: Fix CATEGORIES multiple serializations")]
+    public void CategoriesTest()
+    {
             var vEvent = GetSimpleEvent();
             vEvent.Categories = new List<string> { "Foo", "Bar", "Baz" };
             var c = new Calendar();
@@ -213,5 +210,4 @@ namespace Ical.Net.CoreUnitTests
             var deserialized = UnserializeCalendar(serialized);
             Assert.AreEqual(vEvent, deserialized);
         }
-    }
 }

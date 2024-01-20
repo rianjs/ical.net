@@ -1,11 +1,11 @@
 ﻿using Ical.Net.CalendarComponents;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class CalendarComponentFactory
 {
-    public class CalendarComponentFactory
+    public virtual ICalendarComponent Build(string objectName)
     {
-        public virtual ICalendarComponent Build(string objectName)
-        {
             ICalendarComponent c;
             var name = objectName.ToUpper();
 
@@ -43,5 +43,4 @@ namespace Ical.Net.Serialization
             c.Name = name;
             return c;
         }
-    }
 }
