@@ -188,12 +188,10 @@ namespace Ical.Net.CalendarComponents
 
         private void ExtrapolateTimes(int source)
         {
-            /*
-			 * Source values, a fix introduced to prevent StackOverflow exceptions from occuring.
-			 *    0 = Due
-			 *	  1 = Duration
-			 *	  2 = DtStart
-			 */
+			// Source values, a fix introduced to prevent StackOverflow exceptions from occuring.
+			//   0 = Due
+			//   1 = Duration
+			//   2 = DtStart
             if (Due == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
             {
                 Due = DtStart.Add(Duration);
