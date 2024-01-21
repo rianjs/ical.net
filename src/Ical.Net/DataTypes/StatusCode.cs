@@ -3,50 +3,50 @@ using System.Linq;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
-namespace Ical.Net.DataTypes
-{
-    /// <summary>
-    /// An iCalendar status code.
-    /// </summary>
-    public class StatusCode : EncodableDataType
-    {
-        public int[] Parts { get; private set; }
+namespace Ical.Net.DataTypes;
 
-        public int Primary
+/// <summary>
+/// An iCalendar status code.
+/// </summary>
+public class StatusCode : EncodableDataType
+{
+    public int[] Parts { get; private set; }
+
+    public int Primary
+    {
+        get
         {
-            get
-            {
                 if (Parts.Length > 0)
                 {
                     return Parts[0];
                 }
                 return 0;
             }
-        }
+    }
 
-        public int Secondary => Parts.Length > 1
-            ? Parts[1]
-            : 0;
+    public int Secondary => Parts.Length > 1
+        ? Parts[1]
+        : 0;
 
-        public int Tertiary => Parts.Length > 2
-            ? Parts[2]
-            : 0;
+    public int Tertiary => Parts.Length > 2
+        ? Parts[2]
+        : 0;
 
-        public StatusCode() {}
+    public StatusCode() {}
 
-        public StatusCode(int[] parts)
-        {
+    public StatusCode(int[] parts)
+    {
             Parts = parts;
         }
 
-        public StatusCode(string value) : this()
-        {
+    public StatusCode(string value) : this()
+    {
             var serializer = new StatusCodeSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        public override void CopyFrom(ICopyable obj)
-        {
+    public override void CopyFrom(ICopyable obj)
+    {
             base.CopyFrom(obj);
             if (obj is StatusCode)
             {
@@ -56,12 +56,12 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public override string ToString() => new StatusCodeSerializer().SerializeToString(this);
+    public override string ToString() => new StatusCodeSerializer().SerializeToString(this);
 
-        protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
+    protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 
-        public override bool Equals(object obj)
-        {
+    public override bool Equals(object obj)
+    {
             if (ReferenceEquals(null, obj))
             {
                 return false;
@@ -77,6 +77,5 @@ namespace Ical.Net.DataTypes
             return Equals((StatusCode) obj);
         }
 
-        public override int GetHashCode() => CollectionHelpers.GetHashCode(Parts);
-    }
+    public override int GetHashCode() => CollectionHelpers.GetHashCode(Parts);
 }

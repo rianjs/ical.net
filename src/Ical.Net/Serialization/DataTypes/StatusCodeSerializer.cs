@@ -3,18 +3,18 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class StatusCodeSerializer : StringSerializer
 {
-    public class StatusCodeSerializer : StringSerializer
+    public StatusCodeSerializer() { }
+
+    public StatusCodeSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (StatusCode);
+
+    public override string SerializeToString(object obj)
     {
-        public StatusCodeSerializer() { }
-
-        public StatusCodeSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (StatusCode);
-
-        public override string SerializeToString(object obj)
-        {
             var sc = obj as StatusCode;
             if (sc == null)
             {
@@ -29,10 +29,10 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(sc, Escape(string.Join(".", vals)));
         }
 
-        internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             var sc = CreateAndAssociate() as StatusCode;
@@ -64,5 +64,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return new StatusCode(iparts);
         }
-    }
 }

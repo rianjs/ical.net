@@ -2,18 +2,18 @@
 using System.IO;
 using System.Text;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class ParameterSerializer : SerializerBase
 {
-    public class ParameterSerializer : SerializerBase
+    public ParameterSerializer() {}
+
+    public ParameterSerializer(SerializationContext ctx) : base(ctx) {}
+
+    public override Type TargetType => typeof (CalendarParameter);
+
+    public override string SerializeToString(object obj)
     {
-        public ParameterSerializer() {}
-
-        public ParameterSerializer(SerializationContext ctx) : base(ctx) {}
-
-        public override Type TargetType => typeof (CalendarParameter);
-
-        public override string SerializeToString(object obj)
-        {
             if (!(obj is CalendarParameter p))
             {
                 return null;
@@ -36,6 +36,5 @@ namespace Ical.Net.Serialization
             return builder.ToString();
         }
 
-        public override object Deserialize(TextReader tr) => null;
-    }
+    public override object Deserialize(TextReader tr) => null;
 }

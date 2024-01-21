@@ -2,18 +2,18 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class TriggerSerializer : StringSerializer
 {
-    public class TriggerSerializer : StringSerializer
+    public TriggerSerializer() { }
+
+    public TriggerSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (Trigger);
+
+    public override string SerializeToString(object obj)
     {
-        public TriggerSerializer() { }
-
-        public TriggerSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (Trigger);
-
-        public override string SerializeToString(object obj)
-        {
             try
             {
                 if (!(obj is Trigger t))
@@ -54,8 +54,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             if (!(CreateAndAssociate() is Trigger t))
@@ -105,5 +105,4 @@ namespace Ical.Net.Serialization.DataTypes
                 SerializationContext.Pop();
             }
         }
-    }
 }

@@ -2,42 +2,42 @@ using System;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace Ical.Net.DataTypes;
+
+/// <summary>
+/// Represents an RFC 5545 "BYDAY" value.
+/// </summary>
+public class WeekDay : EncodableDataType
 {
-    /// <summary>
-    /// Represents an RFC 5545 "BYDAY" value.
-    /// </summary>
-    public class WeekDay : EncodableDataType
+    public virtual int Offset { get; set; } = int.MinValue;
+
+    public virtual DayOfWeek DayOfWeek { get; set; }
+
+    public WeekDay()
     {
-        public virtual int Offset { get; set; } = int.MinValue;
-
-        public virtual DayOfWeek DayOfWeek { get; set; }
-
-        public WeekDay()
-        {
             Offset = int.MinValue;
         }
 
-        public WeekDay(DayOfWeek day) : this()
-        {
+    public WeekDay(DayOfWeek day) : this()
+    {
             DayOfWeek = day;
         }
 
-        public WeekDay(DayOfWeek day, int num) : this(day)
-        {
+    public WeekDay(DayOfWeek day, int num) : this(day)
+    {
             Offset = num;
         }
 
-        public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
+    public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
 
-        public WeekDay(string value)
-        {
+    public WeekDay(string value)
+    {
             var serializer = new WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        public override bool Equals(object obj)
-        {
+    public override bool Equals(object obj)
+    {
             if (!(obj is WeekDay))
             {
                 return false;
@@ -47,10 +47,10 @@ namespace Ical.Net.DataTypes
             return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
         }
 
-        public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
+    public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
 
-        public override void CopyFrom(ICopyable obj)
-        {
+    public override void CopyFrom(ICopyable obj)
+    {
             base.CopyFrom(obj);
             if (obj is WeekDay)
             {
@@ -60,8 +60,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public int CompareTo(object obj)
-        {
+    public int CompareTo(object obj)
+    {
             WeekDay bd = null;
             if (obj is string)
             {
@@ -83,5 +83,4 @@ namespace Ical.Net.DataTypes
             }
             return compare;
         }
-    }
 }

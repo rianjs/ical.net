@@ -6,16 +6,16 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 {
-    public class RecurrencePatternSerializer : EncodableDataTypeSerializer
+    public RecurrencePatternSerializer() { }
+
+    public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public static DayOfWeek GetDayOfWeek(string value)
     {
-        public RecurrencePatternSerializer() { }
-
-        public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public static DayOfWeek GetDayOfWeek(string value)
-        {
             switch (value.ToUpper())
             {
                 case "SU":
@@ -36,8 +36,8 @@ namespace Ical.Net.Serialization.DataTypes
             throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
         }
 
-        protected static void AddInt32Values(IList<int> list, string value)
-        {
+    protected static void AddInt32Values(IList<int> list, string value)
+    {
             var values = value.Split(',');
             foreach (var v in values)
             {
@@ -45,8 +45,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, IList<int> values, int min, int max)
-        {
+    public virtual void CheckRange(string name, IList<int> values, int min, int max)
+    {
             var allowZero = (min == 0 || max == 0);
             foreach (var value in values)
             {
@@ -54,14 +54,14 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max)
-        {
+    public virtual void CheckRange(string name, int value, int min, int max)
+    {
             var allowZero = min == 0 || max == 0;
             CheckRange(name, value, min, max, allowZero);
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
-        {
+    public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
+    {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
             {
                 throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max +
@@ -69,8 +69,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
-        {
+    public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+    {
             if (Equals(obj1, default(T)) || Equals(obj2, default(TU)))
             {
                 return;
@@ -93,18 +93,18 @@ namespace Ical.Net.Serialization.DataTypes
             throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
-        private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
-        {
+    private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+    {
             if (byValue.Any())
             {
                 aggregate.Add(name + "=" + string.Join(",", byValue.Select(i => i.ToString())));
             }
         }
 
-        public override Type TargetType => typeof (RecurrencePattern);
+    public override Type TargetType => typeof (RecurrencePattern);
 
-        public override string SerializeToString(object obj)
-        {
+    public override string SerializeToString(object obj)
+    {
             var recur = obj as RecurrencePattern;
             var factory = GetService<ISerializerFactory>();
             if (recur == null || factory == null)
@@ -187,32 +187,32 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(recur, string.Join(";", values));
         }
 
-        //Compiling these is a one-time penalty of about 80ms
-        private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+    //Compiling these is a one-time penalty of about 80ms
+    private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
-        internal static readonly Regex OtherInterval =
-            new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
+    internal static readonly Regex OtherInterval =
+        new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
 
-        internal static readonly Regex AdverbFrequencies = new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled);
+    internal static readonly Regex AdverbFrequencies = new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled);
 
-        internal static readonly Regex NumericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
+    internal static readonly Regex NumericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
 
-        internal static readonly Regex TemporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
+    internal static readonly Regex TemporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
 
-        internal static readonly Regex RelativeDaysOfWeek =
-            new Regex(
-                @"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+",
-                _ciCompiled);
-
-        internal static readonly Regex Time = new Regex(@"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?",
+    internal static readonly Regex RelativeDaysOfWeek =
+        new Regex(
+            @"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+",
             _ciCompiled);
 
-        internal static readonly Regex RecurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
+    internal static readonly Regex Time = new Regex(@"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?",
+        _ciCompiled);
 
-        internal static readonly Regex SpecificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
+    internal static readonly Regex RecurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
 
-        public override object Deserialize(TextReader tr)
-        {
+    internal static readonly Regex SpecificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
+
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             // Instantiate the data type
@@ -489,5 +489,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return r;
         }
-    }
 }

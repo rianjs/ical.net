@@ -1,7 +1,6 @@
-﻿namespace Ical.Net.DataTypes
+﻿namespace Ical.Net.DataTypes;
+
+public interface IEncodableDataType
 {
-    public interface IEncodableDataType
-    {
-        string Encoding { get; set; }
-    }
+    string Encoding { get; set; }
 }

@@ -3,15 +3,15 @@ using Ical.Net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.CoreUnitTests
-{
-    public class TextUtilTests
-    {
-        [Test, TestCaseSource(nameof(FoldLines_TestCases))]
-        public string FoldLines_Tests(string incoming) => TextUtil.FoldLines(incoming);
+namespace Ical.Net.CoreUnitTests;
 
-        public static IEnumerable<ITestCaseData> FoldLines_TestCases()
-        {
+public class TextUtilTests
+{
+    [Test, TestCaseSource(nameof(FoldLines_TestCases))]
+    public string FoldLines_Tests(string incoming) => TextUtil.FoldLines(incoming);
+
+    public static IEnumerable<ITestCaseData> FoldLines_TestCases()
+    {
             yield return new TestCaseData("Short")
                 .Returns("Short" + SerializationConstants.LineBreak)
                 .SetName("Short string remains unfolded");
@@ -42,5 +42,4 @@ namespace Ical.Net.CoreUnitTests
                 .Returns(reallyLongReturns)
                 .SetName("Really long string is split onto multiple lines at a width of 75 chars, prefixed with a space");
         }
-    }
 }

@@ -4,22 +4,22 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.Collections;
 
-namespace Ical.Net.Proxies
-{
-    public class UniqueComponentListProxy<TComponentType> :
-        CalendarObjectListProxy<TComponentType>,
-        IUniqueComponentList<TComponentType>
-        where TComponentType : class, IUniqueComponent
-    {
-        private readonly Dictionary<string, TComponentType> _lookup;
+namespace Ical.Net.Proxies;
 
-        public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
-        {
+public class UniqueComponentListProxy<TComponentType> :
+    CalendarObjectListProxy<TComponentType>,
+    IUniqueComponentList<TComponentType>
+    where TComponentType : class, IUniqueComponent
+{
+    private readonly Dictionary<string, TComponentType> _lookup;
+
+    public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
+    {
             _lookup = new Dictionary<string, TComponentType>();
         }
 
-        private TComponentType Search(string uid)
-        {
+    private TComponentType Search(string uid)
+    {
             if (_lookup.TryGetValue(uid, out var componentType))
             {
                 return componentType;
@@ -36,11 +36,11 @@ namespace Ical.Net.Proxies
             return item;
         }
 
-        public virtual TComponentType this[string uid]
+    public virtual TComponentType this[string uid]
+    {
+        get => Search(uid);
+        set
         {
-            get => Search(uid);
-            set
-            {
                 // Find the item matching the UID
                 var item = Search(uid);
 
@@ -54,14 +54,13 @@ namespace Ical.Net.Proxies
                     Add(value);
                 }
             }
-        }
+    }
 
-        public void AddRange(IEnumerable<TComponentType> collection)
-        {
+    public void AddRange(IEnumerable<TComponentType> collection)
+    {
             foreach (var element in collection)
             {
                 Add(element);
             }
         }
-    }
 }

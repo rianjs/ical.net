@@ -3,18 +3,18 @@ using System.IO;
 using System.Text;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class PeriodSerializer : EncodableDataTypeSerializer
 {
-    public class PeriodSerializer : EncodableDataTypeSerializer
+    public PeriodSerializer() { }
+
+    public PeriodSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (Period);
+
+    public override string SerializeToString(object obj)
     {
-        public PeriodSerializer() { }
-
-        public PeriodSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (Period);
-
-        public override string SerializeToString(object obj)
-        {
             var p = obj as Period;
             var factory = GetService<ISerializerFactory>();
 
@@ -36,8 +36,7 @@ namespace Ical.Net.Serialization.DataTypes
                 }
                 var sb = new StringBuilder();
 
-                // Serialize the start time                    
-                sb.Append(dtSerializer.SerializeToString(p.StartTime));
+                // Serialize the start time                         sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
                 // Serialize the duration
                 if (!p.StartTime.HasTime)
@@ -57,8 +56,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             var p = CreateAndAssociate() as Period;
@@ -99,5 +98,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return null;
         }
-    }
 }

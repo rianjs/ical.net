@@ -2,52 +2,52 @@ using System;
 using System.Runtime.Serialization;
 using Ical.Net.Proxies;
 
-namespace Ical.Net.DataTypes
+namespace Ical.Net.DataTypes;
+
+/// <summary>
+/// An abstract class from which all iCalendar data types inherit.
+/// </summary>
+public abstract class CalendarDataType : ICalendarDataType
 {
-    /// <summary>
-    /// An abstract class from which all iCalendar data types inherit.
-    /// </summary>
-    public abstract class CalendarDataType : ICalendarDataType
+    private IParameterCollection _parameters;
+    private ParameterCollectionProxy _proxy;
+    private ServiceProvider _serviceProvider;
+
+    protected ICalendarObject _AssociatedObject;
+
+    protected CalendarDataType()
     {
-        private IParameterCollection _parameters;
-        private ParameterCollectionProxy _proxy;
-        private ServiceProvider _serviceProvider;
-
-        protected ICalendarObject _AssociatedObject;
-
-        protected CalendarDataType()
-        {
             Initialize();
         }
 
-        private void Initialize()
-        {
+    private void Initialize()
+    {
             _parameters = new ParameterList();
             _proxy = new ParameterCollectionProxy(_parameters);
             _serviceProvider = new ServiceProvider();
         }
 
-        [OnDeserializing]
-        internal void DeserializingInternal(StreamingContext context)
-        {
+    [OnDeserializing]
+    internal void DeserializingInternal(StreamingContext context)
+    {
             OnDeserializing(context);
         }
 
-        [OnDeserialized]
-        internal void DeserializedInternal(StreamingContext context)
-        {
+    [OnDeserialized]
+    internal void DeserializedInternal(StreamingContext context)
+    {
             OnDeserialized(context);
         }
 
-        protected virtual void OnDeserializing(StreamingContext context)
-        {
+    protected virtual void OnDeserializing(StreamingContext context)
+    {
             Initialize();
         }
 
-        protected virtual void OnDeserialized(StreamingContext context) {}
+    protected virtual void OnDeserialized(StreamingContext context) {}
 
-        public virtual Type GetValueType()
-        {
+    public virtual Type GetValueType()
+    {
             // See RFC 5545 Section 3.2.20.
             if (_proxy != null && _proxy.ContainsKey("VALUE"))
             {
@@ -89,16 +89,16 @@ namespace Ical.Net.DataTypes
             return null;
         }
 
-        public virtual void SetValueType(string type)
-        {
+    public virtual void SetValueType(string type)
+    {
             _proxy?.Set("VALUE", type ?? type.ToUpper());
         }
 
-        public virtual ICalendarObject AssociatedObject
+    public virtual ICalendarObject AssociatedObject
+    {
+        get => _AssociatedObject;
+        set
         {
-            get => _AssociatedObject;
-            set
-            {
                 if (Equals(_AssociatedObject, value))
                 {
                     return;
@@ -119,22 +119,22 @@ namespace Ical.Net.DataTypes
                     _proxy.SetProxiedObject(_parameters);
                 }
             }
-        }
+    }
 
-        public virtual Calendar Calendar => _AssociatedObject?.Calendar;
+    public virtual Calendar Calendar => _AssociatedObject?.Calendar;
 
-        public virtual string Language
-        {
-            get => Parameters.Get("LANGUAGE");
-            set => Parameters.Set("LANGUAGE", value);
-        }
+    public virtual string Language
+    {
+        get => Parameters.Get("LANGUAGE");
+        set => Parameters.Set("LANGUAGE", value);
+    }
 
-        /// <summary>
-        /// Copies values from the target object to the
-        /// current object.
-        /// </summary>
-        public virtual void CopyFrom(ICopyable obj)
-        {
+    /// <summary>
+    /// Copies values from the target object to the
+    /// current object.
+    /// </summary>
+    public virtual void CopyFrom(ICopyable obj)
+    {
             if (!(obj is ICalendarDataType))
             {
                 return;
@@ -146,12 +146,12 @@ namespace Ical.Net.DataTypes
             _proxy.SetProxiedObject(dt.Parameters);
         }
 
-        /// <summary>
-        /// Creates a copy of the object.
-        /// </summary>
-        /// <returns>The copy of the object.</returns>
-        public virtual T Copy<T>()
-        {
+    /// <summary>
+    /// Creates a copy of the object.
+    /// </summary>
+    /// <returns>The copy of the object.</returns>
+    public virtual T Copy<T>()
+    {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
 
@@ -164,22 +164,21 @@ namespace Ical.Net.DataTypes
             return default(T);
         }
 
-        public virtual IParameterCollection Parameters => _proxy;
+    public virtual IParameterCollection Parameters => _proxy;
 
-        public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
+    public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 
-        public object GetService(string name) => _serviceProvider.GetService(name);
+    public object GetService(string name) => _serviceProvider.GetService(name);
 
-        public T GetService<T>() => _serviceProvider.GetService<T>();
+    public T GetService<T>() => _serviceProvider.GetService<T>();
 
-        public T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
+    public T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
 
-        public void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
+    public void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
 
-        public void SetService(object obj) => _serviceProvider.SetService(obj);
+    public void SetService(object obj) => _serviceProvider.SetService(obj);
 
-        public void RemoveService(Type type) => _serviceProvider.RemoveService(type);
+    public void RemoveService(Type type) => _serviceProvider.RemoveService(type);
 
-        public void RemoveService(string name) => _serviceProvider.RemoveService(name);
-    }
+    public void RemoveService(string name) => _serviceProvider.RemoveService(name);
 }

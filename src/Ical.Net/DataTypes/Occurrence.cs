@@ -1,29 +1,29 @@
 using System;
 using Ical.Net.CalendarComponents;
 
-namespace Ical.Net.DataTypes
-{
-    public class Occurrence : IComparable<Occurrence>
-    {
-        public Period Period { get; set; }
-        public IRecurrable Source { get; set; }
+namespace Ical.Net.DataTypes;
 
-        public Occurrence(Occurrence ao)
-        {
+public class Occurrence : IComparable<Occurrence>
+{
+    public Period Period { get; set; }
+    public IRecurrable Source { get; set; }
+
+    public Occurrence(Occurrence ao)
+    {
             Period = ao.Period;
             Source = ao.Source;
         }
 
-        public Occurrence(IRecurrable recurrable, Period period)
-        {
+    public Occurrence(IRecurrable recurrable, Period period)
+    {
             Source = recurrable;
             Period = period;
         }
 
-        public bool Equals(Occurrence other) => Equals(Period, other.Period) && Equals(Source, other.Source);
+    public bool Equals(Occurrence other) => Equals(Period, other.Period) && Equals(Source, other.Source);
 
-        public override bool Equals(object obj)
-        {
+    public override bool Equals(object obj)
+    {
             if (ReferenceEquals(null, obj))
             {
                 return false;
@@ -31,16 +31,16 @@ namespace Ical.Net.DataTypes
             return obj is Occurrence && Equals((Occurrence) obj);
         }
 
-        public override int GetHashCode()
-        {
+    public override int GetHashCode()
+    {
             unchecked
             {
                 return ((Period?.GetHashCode() ?? 0) * 397) ^ (Source?.GetHashCode() ?? 0);
             }
         }
 
-        public override string ToString()
-        {
+    public override string ToString()
+    {
             var s = "Occurrence";
             if (Source != null)
             {
@@ -55,6 +55,5 @@ namespace Ical.Net.DataTypes
             return s;
         }
 
-        public int CompareTo(Occurrence other) => Period.CompareTo(other.Period);
-    }
+    public int CompareTo(Occurrence other) => Period.CompareTo(other.Period);
 }

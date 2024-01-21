@@ -6,89 +6,89 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using NUnit.Framework;
 
-namespace Ical.Net.CoreUnitTests
+namespace Ical.Net.CoreUnitTests;
+
+internal class GetOccurrenceTests
 {
-    internal class GetOccurrenceTests
+    public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(incoming);
+
+    [Test]
+    public void WrongDurationTest()
     {
-        public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(incoming);
+        var firstStart = new CalDateTime(DateTime.Parse("2016-01-01"));
+        var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05"));
+        var vEvent = new CalendarEvent {DtStart = firstStart, DtEnd = firstEnd,};
 
-        [Test]
-        public void WrongDurationTest()
+        var secondStart = new CalDateTime(DateTime.Parse("2016-03-01"));
+        var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05"));
+        var vEvent2 = new CalendarEvent {DtStart = secondStart, DtEnd = secondEnd,};
+
+        var calendar = new Calendar();
+        calendar.Events.Add(vEvent);
+        calendar.Events.Add(vEvent2);
+
+        var searchStart = DateTime.Parse("2015-12-29");
+        var searchEnd = DateTime.Parse("2017-02-10");
+        var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
+
+        var firstOccurrence = occurrences.First();
+        var firstStartCopy = firstStart.Copy<CalDateTime>();
+        var firstEndCopy = firstEnd.Copy<CalDateTime>();
+        Assert.AreEqual(firstStartCopy, firstOccurrence.Period.StartTime);
+        Assert.AreEqual(firstEndCopy, firstOccurrence.Period.EndTime);
+
+        var secondOccurrence = occurrences.Last();
+        var secondStartCopy = secondStart.Copy<CalDateTime>();
+        var secondEndCopy = secondEnd.Copy<CalDateTime>();
+        Assert.AreEqual(secondStartCopy, secondOccurrence.Period.StartTime);
+        Assert.AreEqual(secondEndCopy, secondOccurrence.Period.EndTime);
+    }
+
+    [Test]
+    public void SkippedOccurrenceOnWeeklyPattern()
+    {
+        const int evaluationsCount = 1000;
+        var eventStart = new CalDateTime(new DateTime(2016, 1, 1, 10, 0, 0, DateTimeKind.Utc));
+        var eventEnd = new CalDateTime(new DateTime(2016, 1, 1, 11, 0, 0, DateTimeKind.Utc));
+        var vEvent = new CalendarEvent
         {
-            var firstStart = new CalDateTime(DateTime.Parse("2016-01-01"));
-            var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05"));
-            var vEvent = new CalendarEvent {DtStart = firstStart, DtEnd = firstEnd,};
+            DtStart = eventStart,
+            DtEnd = eventEnd,
+        };
 
-            var secondStart = new CalDateTime(DateTime.Parse("2016-03-01"));
-            var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05"));
-            var vEvent2 = new CalendarEvent {DtStart = secondStart, DtEnd = secondEnd,};
+        var pattern = new RecurrencePattern
+        {
+            Frequency = FrequencyType.Weekly,
+            ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
+        };
+        vEvent.RecurrenceRules.Add(pattern);
+        var calendar = new Calendar();
+        calendar.Events.Add(vEvent);
 
-            var calendar = new Calendar();
-            calendar.Events.Add(vEvent);
-            calendar.Events.Add(vEvent2);
+        var intervalStart = eventStart;
+        var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
 
-            var searchStart = DateTime.Parse("2015-12-29");
-            var searchEnd = DateTime.Parse("2017-02-10");
-            var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
+        var occurrences = RecurrenceUtil.GetOccurrences(
+            recurrable: vEvent,
+            periodStart: intervalStart,
+            periodEnd: intervalEnd,
+            includeReferenceDateInResults: false);
+        var occurrenceSet = new HashSet<IDateTime>(occurrences.Select(o => o.Period.StartTime));
 
-            var firstOccurrence = occurrences.First();
-            var firstStartCopy = firstStart.Copy<CalDateTime>();
-            var firstEndCopy = firstEnd.Copy<CalDateTime>();
-            Assert.AreEqual(firstStartCopy, firstOccurrence.Period.StartTime);
-            Assert.AreEqual(firstEndCopy, firstOccurrence.Period.EndTime);
+        Assert.AreEqual(evaluationsCount, occurrenceSet.Count);
 
-            var secondOccurrence = occurrences.Last();
-            var secondStartCopy = secondStart.Copy<CalDateTime>();
-            var secondEndCopy = secondEnd.Copy<CalDateTime>();
-            Assert.AreEqual(secondStartCopy, secondOccurrence.Period.StartTime);
-            Assert.AreEqual(secondEndCopy, secondOccurrence.Period.EndTime);
+        for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime)currentOccurrence.AddDays(7))
+        {
+            var contains = occurrenceSet.Contains(currentOccurrence);
+            Assert.IsTrue(contains, $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
         }
-
-        [Test]
-        public void SkippedOccurrenceOnWeeklyPattern()
-        {
-            const int evaluationsCount = 1000;
-            var eventStart = new CalDateTime(new DateTime(2016, 1, 1, 10, 0, 0, DateTimeKind.Utc));
-            var eventEnd = new CalDateTime(new DateTime(2016, 1, 1, 11, 0, 0, DateTimeKind.Utc));
-            var vEvent = new CalendarEvent
-            {
-                DtStart = eventStart,
-                DtEnd = eventEnd,
-            };
-
-            var pattern = new RecurrencePattern
-            {
-                Frequency = FrequencyType.Weekly,
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
-            };
-            vEvent.RecurrenceRules.Add(pattern);
-            var calendar = new Calendar();
-            calendar.Events.Add(vEvent);
-
-            var intervalStart = eventStart;
-            var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
-
-            var occurrences = RecurrenceUtil.GetOccurrences(
-                recurrable: vEvent,
-                periodStart: intervalStart,
-                periodEnd: intervalEnd,
-                includeReferenceDateInResults: false);
-            var occurrenceSet = new HashSet<IDateTime>(occurrences.Select(o => o.Period.StartTime));
-
-            Assert.AreEqual(evaluationsCount, occurrenceSet.Count);
-
-            for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime)currentOccurrence.AddDays(7))
-            {
-                var contains = occurrenceSet.Contains(currentOccurrence);
-                Assert.IsTrue(contains, $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
-            }
-        }
+    }
 
 
-        [Test]
-        public void EnumerationChangedException()
-        {
-            const string ical = @"BEGIN:VCALENDAR
+    [Test]
+    public void EnumerationChangedException()
+    {
+        const string ical = @"BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -132,19 +132,19 @@ END:VEVENT
 
 END:VCALENDAR";
 
-            var calendar = GetCalendars(ical);
-            var date = new DateTime(2016, 10, 11);
-            var occurrences = calendar.GetOccurrences(date);
+        var calendar = GetCalendars(ical);
+        var date = new DateTime(2016, 10, 11);
+        var occurrences = calendar.GetOccurrences(date);
 
-            //We really want to make sure this doesn't explode
-            Assert.AreEqual(1, occurrences.Count);
-        }
+        //We really want to make sure this doesn't explode
+        Assert.AreEqual(1, occurrences.Count);
+    }
 
-        [Test]
-        public void GetOccurrencesShouldEnumerate()
-        {
-            const string ical =
-   @"BEGIN:VCALENDAR
+    [Test]
+    public void GetOccurrencesShouldEnumerate()
+    {
+        const string ical =
+            @"BEGIN:VCALENDAR
 PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
 VERSION:2.0
 BEGIN:VTIMEZONE
@@ -196,11 +196,10 @@ END:VEVENT
 END:VCALENDAR
 ";
 
-            var collection = Calendar.Load(ical);
-            var startCheck = new DateTime(2016, 11, 11);
-            var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
+        var collection = Calendar.Load(ical);
+        var startCheck = new DateTime(2016, 11, 11);
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
 
-            Assert.IsTrue(occurrences.Count == 4);
-        }
+        Assert.IsTrue(occurrences.Count == 4);
     }
 }

@@ -4,27 +4,27 @@ using System.Diagnostics;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace Ical.Net.Evaluation;
+
+public class TimeZoneEvaluator : Evaluator
 {
-    public class TimeZoneEvaluator : Evaluator
+    protected VTimeZone TimeZone { get; set; }
+
+    private List<Occurrence> _occurrences;
+    public virtual List<Occurrence> Occurrences
     {
-        protected VTimeZone TimeZone { get; set; }
+        get => _occurrences;
+        set => _occurrences = value;
+    }
 
-        private List<Occurrence> _occurrences;
-        public virtual List<Occurrence> Occurrences
-        {
-            get => _occurrences;
-            set => _occurrences = value;
-        }
-
-        public TimeZoneEvaluator(VTimeZone tz)
-        {
+    public TimeZoneEvaluator(VTimeZone tz)
+    {
             TimeZone = tz;
             _occurrences = new List<Occurrence>();
         }
 
-        void ProcessOccurrences(IDateTime referenceDate)
-        {
+    void ProcessOccurrences(IDateTime referenceDate)
+    {
             // Sort the occurrences by start time
             _occurrences.Sort(
                 delegate (Occurrence o1, Occurrence o2)
@@ -55,14 +55,14 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        public override void Clear()
-        {
+    public override void Clear()
+    {
             base.Clear();
             _occurrences.Clear();
         }
 
-        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
-        {
+    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    {
             // Ensure the reference date is associated with the time zone
             if (referenceDate.AssociatedObject == null)
                 referenceDate.AssociatedObject = TimeZone;
@@ -133,5 +133,4 @@ namespace Ical.Net.Evaluation
 
             return Periods;
         }
-    }
 }

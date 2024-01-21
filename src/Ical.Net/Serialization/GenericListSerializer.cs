@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Ical.Net.Serialization
-{
-    public class GenericListSerializer : SerializerBase
-    {
-        private readonly Type _innerType;
-        private readonly Type _objectType;
+namespace Ical.Net.Serialization;
 
-        public GenericListSerializer(Type objectType)
-        {
+public class GenericListSerializer : SerializerBase
+{
+    private readonly Type _innerType;
+    private readonly Type _objectType;
+
+    public GenericListSerializer(Type objectType)
+    {
             _innerType = objectType.GetGenericArguments()[0];
 
             var listDef = typeof (List<>);
             _objectType = listDef.MakeGenericType(typeof (object));
         }
 
-        public override Type TargetType => _objectType;
+    public override Type TargetType => _objectType;
 
-        public override string SerializeToString(object obj) => throw new NotImplementedException();
+    public override string SerializeToString(object obj) => throw new NotImplementedException();
 
-        private MethodInfo _addMethodInfo;
-        public override object Deserialize(TextReader tr)
-        {
+    private MethodInfo _addMethodInfo;
+    public override object Deserialize(TextReader tr)
+    {
             var p = SerializationContext.Peek() as ICalendarProperty;
             if (p == null)
             {
@@ -76,5 +76,4 @@ namespace Ical.Net.Serialization
             }
             return listObj;
         }
-    }
 }

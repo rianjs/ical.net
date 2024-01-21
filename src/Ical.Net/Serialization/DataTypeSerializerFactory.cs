@@ -3,21 +3,21 @@ using System.Reflection;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class DataTypeSerializerFactory : ISerializerFactory
 {
-    public class DataTypeSerializerFactory : ISerializerFactory
+    /// <summary>
+    /// Returns a serializer that can be used to serialize and object
+    /// of type <paramref name="objectType"/>.
+    /// <note>
+    ///     TODO: Add support for caching.
+    /// </note>
+    /// </summary>
+    /// <param name="objectType">The type of object to be serialized.</param>
+    /// <param name="ctx">The serialization context.</param>
+    public virtual ISerializer Build(Type objectType, SerializationContext ctx)
     {
-        /// <summary>
-        /// Returns a serializer that can be used to serialize and object
-        /// of type <paramref name="objectType"/>.
-        /// <note>
-        ///     TODO: Add support for caching.
-        /// </note>
-        /// </summary>
-        /// <param name="objectType">The type of object to be serialized.</param>
-        /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
-        {
             if (objectType != null)
             {
                 ISerializer s;
@@ -89,5 +89,4 @@ namespace Ical.Net.Serialization
             }
             return null;
         }
-    }
 }

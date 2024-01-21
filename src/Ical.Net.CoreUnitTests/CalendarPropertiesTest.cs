@@ -5,14 +5,14 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
 
-namespace Ical.Net.CoreUnitTests
+namespace Ical.Net.CoreUnitTests;
+
+[TestFixture]
+public class CalendarPropertiesTest
 {
-    [TestFixture]
-    public class CalendarPropertiesTest
+    [Test]
+    public void AddPropertyShouldNotIncludePropertyNameInValue()
     {
-        [Test]
-        public void AddPropertyShouldNotIncludePropertyNameInValue()
-        {
             const string propName = "X-WR-CALNAME";
             const string propValue = "Testname";
 
@@ -26,10 +26,10 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual($"{propName}:{propValue}", propLine);
         }
 
-        [Test]
-        [Ignore("Calendar properties aren't being properly serialized")]
-        public void PropertySerialization_Tests()
-        {
+    [Test]
+    [Ignore("Calendar properties aren't being properly serialized")]
+    public void PropertySerialization_Tests()
+    {
             const string formatted =
 @"FMTTYPE=text/html:<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 3.2//EN"">\n<HTML>\n<HEAD>\n<META NAME=""Generator"" CONTENT=""MS Exchange Server version rmj.rmm.rup.rpr"">\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n<!-- Converted from text/rtf format -->\n\n<P DIR=LTR><SPAN LANG=""en-us""><FONT FACE=""Calibri"">This is some</FONT></SPAN><SPAN LANG=""en-us""><B> <FONT FACE=""Calibri"">HTML</FONT></B></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri""></FONT></SPAN><SPAN LANG=""en-us""><U> <FONT FACE=""Calibri"">formatted</FONT></U></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri""></FONT></SPAN><SPAN LANG=""en-us""><I> <FONT FACE=""Calibri"">text</FONT></I></SPAN><SPAN LANG=""en-us""><FONT FACE=""Calibri"">.</FONT></SPAN><SPAN LANG=""en-us""></SPAN></P>\n\n</BODY>\n</HTML>";
 
@@ -50,11 +50,10 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(serialized.Contains("X-ALT-DESC;"));
         }
 
-        [Test]
-        public void PropertySetValueMustAllowNull()
-        {
+    [Test]
+    public void PropertySetValueMustAllowNull()
+    {
             var property = new CalendarProperty();
             Assert.DoesNotThrow(() => property.SetValue(null));
         }
-    }
 }

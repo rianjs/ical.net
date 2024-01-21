@@ -2,18 +2,18 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class FreeBusyEntrySerializer : PeriodSerializer
 {
-    public class FreeBusyEntrySerializer : PeriodSerializer
+    public FreeBusyEntrySerializer() { }
+
+    public FreeBusyEntrySerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (FreeBusyEntry);
+
+    public override string SerializeToString(object obj)
     {
-        public FreeBusyEntrySerializer() { }
-
-        public FreeBusyEntrySerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (FreeBusyEntry);
-
-        public override string SerializeToString(object obj)
-        {
             var entry = obj as FreeBusyEntry;
             if (entry == null)
             {
@@ -39,8 +39,8 @@ namespace Ical.Net.Serialization.DataTypes
             return base.SerializeToString(obj);
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var entry = base.Deserialize(tr) as FreeBusyEntry;
             if (entry == null)
             {
@@ -76,5 +76,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return entry;
         }
-    }
 }

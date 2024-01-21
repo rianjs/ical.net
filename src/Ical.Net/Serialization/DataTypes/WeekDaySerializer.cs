@@ -3,18 +3,18 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class WeekDaySerializer : EncodableDataTypeSerializer
 {
-    public class WeekDaySerializer : EncodableDataTypeSerializer
+    public WeekDaySerializer() { }
+
+    public WeekDaySerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (WeekDay);
+
+    public override string SerializeToString(object obj)
     {
-        public WeekDaySerializer() { }
-
-        public WeekDaySerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (WeekDay);
-
-        public override string SerializeToString(object obj)
-        {
             if (!(obj is WeekDay ds))
             {
                 return null;
@@ -30,10 +30,10 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(ds, value);
         }
 
-        private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
@@ -59,5 +59,4 @@ namespace Ical.Net.Serialization.DataTypes
             ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
             return ds;
         }
-    }
 }

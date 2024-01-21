@@ -1,15 +1,15 @@
 ﻿using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public abstract class EncodableDataTypeSerializer : DataTypeSerializer
 {
-    public abstract class EncodableDataTypeSerializer : DataTypeSerializer
+    protected EncodableDataTypeSerializer() {}
+
+    protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
+
+    protected string Encode(IEncodableDataType dt, string value)
     {
-        protected EncodableDataTypeSerializer() {}
-
-        protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
-
-        protected string Encode(IEncodableDataType dt, string value)
-        {
             if (value == null)
             {
                 return null;
@@ -25,8 +25,8 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(dt, encodingStack.Current.GetBytes(value));
         }
 
-        protected string Encode(IEncodableDataType dt, byte[] data)
-        {
+    protected string Encode(IEncodableDataType dt, byte[] data)
+    {
             if (data == null)
             {
                 return null;
@@ -43,8 +43,8 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingProvider?.Encode(dt.Encoding, data);
         }
 
-        protected string Decode(IEncodableDataType dt, string value)
-        {
+    protected string Decode(IEncodableDataType dt, string value)
+    {
             if (dt?.Encoding == null)
             {
                 return value;
@@ -61,8 +61,8 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingStack.Current.GetString(data);
         }
 
-        protected byte[] DecodeData(IEncodableDataType dt, string value)
-        {
+    protected byte[] DecodeData(IEncodableDataType dt, string value)
+    {
             if (value == null)
             {
                 return null;
@@ -78,5 +78,4 @@ namespace Ical.Net.Serialization.DataTypes
             var encodingProvider = GetService<IEncodingProvider>();
             return encodingProvider?.DecodeData(dt.Encoding, value);
         }
-    }
 }

@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace Ical.Net.Evaluation;
+
+public class TimeZoneInfoEvaluator : RecurringEvaluator
 {
-    public class TimeZoneInfoEvaluator : RecurringEvaluator
+    protected VTimeZoneInfo TimeZoneInfo
     {
-        protected VTimeZoneInfo TimeZoneInfo
-        {
-            get => Recurrable as VTimeZoneInfo;
-            set => Recurrable = value;
-        }
+        get => Recurrable as VTimeZoneInfo;
+        set => Recurrable = value;
+    }
 
-        public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
+    public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 
-        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
-        {
+    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    {
             // Time zones must include an effective start date/time
             // and must provide an evaluator.
             if (TimeZoneInfo == null)
@@ -28,5 +28,4 @@ namespace Ical.Net.Evaluation
             var periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);
             return periods;
         }
-    }
 }

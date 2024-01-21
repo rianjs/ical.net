@@ -6,18 +6,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class StringSerializer : EncodableDataTypeSerializer
 {
-    public class StringSerializer : EncodableDataTypeSerializer
+    public StringSerializer() {}
+
+    public StringSerializer(SerializationContext ctx) : base(ctx) {}
+
+    internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
+
+    protected virtual string Unescape(string value)
     {
-        public StringSerializer() {}
-
-        public StringSerializer(SerializationContext ctx) : base(ctx) {}
-
-        internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
-
-        protected virtual string Unescape(string value)
-        {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return value;
@@ -38,8 +38,8 @@ namespace Ical.Net.Serialization.DataTypes
             return value;
         }
 
-        protected virtual string Escape(string value)
-        {
+    protected virtual string Escape(string value)
+    {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return value;
@@ -56,10 +56,10 @@ namespace Ical.Net.Serialization.DataTypes
             return value;
         }
 
-        public override Type TargetType => typeof (string);
+    public override Type TargetType => typeof (string);
 
-        public override string SerializeToString(object obj)
-        {
+    public override string SerializeToString(object obj)
+    {
             if (obj == null)
             {
                 return null;
@@ -98,9 +98,9 @@ namespace Ical.Net.Serialization.DataTypes
             return string.Join(",", values);
         }
 
-        internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
-        public override object Deserialize(TextReader tr)
-        {
+    internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
+    public override object Deserialize(TextReader tr)
+    {
             if (tr == null)
             {
                 return null;
@@ -149,5 +149,4 @@ namespace Ical.Net.Serialization.DataTypes
             }
             return values;
         }
-    }
 }

@@ -7,30 +7,30 @@ using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
 
-namespace Ical.Net.CalendarComponents
+namespace Ical.Net.CalendarComponents;
+
+/// <summary>
+/// Represents an RFC 5545 VTIMEZONE component.
+/// </summary>
+public class VTimeZone : CalendarComponent
 {
-    /// <summary>
-    /// Represents an RFC 5545 VTIMEZONE component.
-    /// </summary>
-    public class VTimeZone : CalendarComponent
+    public static VTimeZone FromLocalTimeZone()
+        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id);
+
+    public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id, earlistDateTimeToSupport, includeHistoricalData);
+
+    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
+        => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
+
+    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(tzinfo.Id, earlistDateTimeToSupport, includeHistoricalData);
+
+    public static VTimeZone FromDateTimeZone(string tzId)
+        => FromDateTimeZone(tzId, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
+
+    public static VTimeZone FromDateTimeZone(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
     {
-        public static VTimeZone FromLocalTimeZone()
-            => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id);
-
-        public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-            => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id, earlistDateTimeToSupport, includeHistoricalData);
-
-        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
-            => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
-
-        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-            => FromDateTimeZone(tzinfo.Id, earlistDateTimeToSupport, includeHistoricalData);
-
-        public static VTimeZone FromDateTimeZone(string tzId)
-            => FromDateTimeZone(tzId, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
-
-        public static VTimeZone FromDateTimeZone(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        {
             var vTimeZone = new VTimeZone(tzId);
 
             var earliestYear = 1900;
@@ -117,9 +117,9 @@ namespace Ical.Net.CalendarComponents
             return vTimeZone;
         }
 
-        private static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
-            bool isOnlyInterval = false)
-        {
+    private static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
+        bool isOnlyInterval = false)
+    {
             if (matchedIntervals == null || !matchedIntervals.Any())
             {
                 throw new ArgumentException("No intervals found in matchedIntervals");
@@ -180,8 +180,8 @@ namespace Ical.Net.CalendarComponents
             return timeZoneInfo;
         }
 
-        private static List<ZoneInterval> GetMatchingIntervals(List<ZoneInterval> intervals, ZoneInterval intervalToMatch, bool consecutiveOnly = false)
-        {
+    private static List<ZoneInterval> GetMatchingIntervals(List<ZoneInterval> intervals, ZoneInterval intervalToMatch, bool consecutiveOnly = false)
+    {
             var matchedIntervals = intervals
                 .Where(x => x.Start != Instant.MinValue)
                 .Where(x => x.IsoLocalStart.Month == intervalToMatch.IsoLocalStart.Month
@@ -221,8 +221,8 @@ namespace Ical.Net.CalendarComponents
             return consecutiveIntervals;
         }
 
-        private static void PopulateTimeZoneInfoRecurrenceDates(VTimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
-        {
+    private static void PopulateTimeZoneInfoRecurrenceDates(VTimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
+    {
             foreach (var interval in intervals)
             {
                 var periodList = new PeriodList();
@@ -239,16 +239,16 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
-        {
+    private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
+    {
             var recurrence = new IntervalRecurrencePattern(interval);
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        private class IntervalRecurrencePattern : RecurrencePattern
+    private class IntervalRecurrencePattern : RecurrencePattern
+    {
+        public IntervalRecurrencePattern(ZoneInterval interval)
         {
-            public IntervalRecurrencePattern(ZoneInterval interval)
-            {
                 Frequency = FrequencyType.Yearly;
                 ByMonth.Add(interval.IsoLocalStart.Month);
 
@@ -258,16 +258,16 @@ namespace Ical.Net.CalendarComponents
 
                 ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
             }
-        }
+    }
 
-        public VTimeZone()
-        {
+    public VTimeZone()
+    {
             Name = Components.Timezone;
         }
 
         
-        public VTimeZone(string tzId) : this()
-        {
+    public VTimeZone(string tzId) : this()
+    {
             if (string.IsNullOrWhiteSpace(tzId))
             {
                 return;
@@ -277,20 +277,20 @@ namespace Ical.Net.CalendarComponents
             Location = _nodaZone.Id;
         }
 
-        private DateTimeZone _nodaZone;
-        private string _tzId;
-        public virtual string TzId
+    private DateTimeZone _nodaZone;
+    private string _tzId;
+    public virtual string TzId
+    {
+        get
         {
-            get
-            {
                 if (string.IsNullOrWhiteSpace(_tzId))
                 {
                     _tzId = Properties.Get<string>("TZID");
                 }
                 return _tzId;
             }
-            set
-            {
+        set
+        {
                 if (string.Equals(_tzId, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
@@ -318,47 +318,47 @@ namespace Ical.Net.CalendarComponents
                 _tzId = id;
                 Properties.Set("TZID", value);
             }
-        }
+    }
 
-        private Uri _url;
-        public virtual Uri Url
+    private Uri _url;
+    public virtual Uri Url
+    {
+        get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
+        set
         {
-            get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
-            set
-            {
                 _url = value;
                 Properties.Set("TZURL", _url);
             }
-        }
+    }
 
-        private string _location;
-        public string Location
+    private string _location;
+    public string Location
+    {
+        get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
+        set
         {
-            get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
-            set
-            {
                 _location = value;
                 Properties.Set("X-LIC-LOCATION", _location);
             }
-        }
+    }
 
-        public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
+    public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
 
-        protected bool Equals(VTimeZone other)
-            => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
-                && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-                && Equals(Url, other.Url);
+    protected bool Equals(VTimeZone other)
+        => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+           && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
+           && Equals(Url, other.Url);
 
-        public override bool Equals(object obj)
-        {
+    public override bool Equals(object obj)
+    {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((VTimeZone)obj);
         }
 
-        public override int GetHashCode()
-        {
+    public override int GetHashCode()
+    {
             unchecked
             {
                 var hashCode = Name.GetHashCode();
@@ -367,5 +367,4 @@ namespace Ical.Net.CalendarComponents
                 return hashCode;
             }
         }
-    }
 }

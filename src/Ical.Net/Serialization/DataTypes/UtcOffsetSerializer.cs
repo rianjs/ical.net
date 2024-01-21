@@ -4,18 +4,18 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class UtcOffsetSerializer : EncodableDataTypeSerializer
 {
-    public class UtcOffsetSerializer : EncodableDataTypeSerializer
+    public UtcOffsetSerializer() { }
+
+    public UtcOffsetSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (UtcOffset);
+
+    public override string SerializeToString(object obj)
     {
-        public UtcOffsetSerializer() { }
-
-        public UtcOffsetSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (UtcOffset);
-
-        public override string SerializeToString(object obj)
-        {
             var offset = obj as UtcOffset;
             if (offset != null)
             {
@@ -28,17 +28,17 @@ namespace Ical.Net.Serialization.DataTypes
             return null;
         }
 
-        internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var offsetString = tr.ReadToEnd();
             var offset = new UtcOffset(offsetString);
             return offset;
         }
 
-        public static TimeSpan GetOffset(string rawOffset)
-        {
+    public static TimeSpan GetOffset(string rawOffset)
+    {
             if (rawOffset.EndsWith("00"))
             {
                 rawOffset = rawOffset.Substring(0, rawOffset.Length - 2);
@@ -67,5 +67,4 @@ namespace Ical.Net.Serialization.DataTypes
                 ? -ts
                 : ts;
         }
-    }
 }

@@ -2,18 +2,18 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class IntegerSerializer : EncodableDataTypeSerializer
 {
-    public class IntegerSerializer : EncodableDataTypeSerializer
+    public IntegerSerializer() { }
+
+    public IntegerSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (int);
+
+    public override string SerializeToString(object integer)
     {
-        public IntegerSerializer() { }
-
-        public IntegerSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (int);
-
-        public override string SerializeToString(object integer)
-        {
             try
             {
                 var i = Convert.ToInt32(integer);
@@ -36,8 +36,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             try
@@ -63,5 +63,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return value;
         }
-    }
 }

@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Evaluation
-{
-    public class PeriodListEvaluator : Evaluator
-    {
-        private readonly PeriodList _mPeriodList;
+namespace Ical.Net.Evaluation;
 
-        public PeriodListEvaluator(PeriodList rdt)
-        {
+public class PeriodListEvaluator : Evaluator
+{
+    private readonly PeriodList _mPeriodList;
+
+    public PeriodListEvaluator(PeriodList rdt)
+    {
             _mPeriodList = rdt;
         }
 
-        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
-        {
+    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    {
             var periods = new HashSet<Period>();
 
             if (includeReferenceDateInResults)
@@ -31,5 +31,4 @@ namespace Ical.Net.Evaluation
             periods.UnionWith(_mPeriodList);
             return periods;
         }
-    }
 }

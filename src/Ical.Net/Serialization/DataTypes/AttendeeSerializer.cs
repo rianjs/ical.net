@@ -2,26 +2,26 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class AttendeeSerializer : StringSerializer
 {
-    public class AttendeeSerializer : StringSerializer
+    public AttendeeSerializer() { }
+
+    public AttendeeSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (Attendee);
+
+    public override string SerializeToString(object obj)
     {
-        public AttendeeSerializer() { }
-
-        public AttendeeSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (Attendee);
-
-        public override string SerializeToString(object obj)
-        {
             var a = obj as Attendee;
             return a?.Value == null
                 ? null
                 : Encode(a, a.Value.OriginalString);
         }
 
-        public Attendee Deserialize(string attendee)
-        {
+    public Attendee Deserialize(string attendee)
+    {
             try
             {
                 var a = CreateAndAssociate() as Attendee;
@@ -44,6 +44,5 @@ namespace Ical.Net.Serialization.DataTypes
             return null;
         }
 
-        public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
-    }
+    public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
 }

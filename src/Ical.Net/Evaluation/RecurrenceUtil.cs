@@ -4,21 +4,21 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 
-namespace Ical.Net.Evaluation
+namespace Ical.Net.Evaluation;
+
+internal class RecurrenceUtil
 {
-    internal class RecurrenceUtil
+    public static void ClearEvaluation(IRecurrable recurrable)
     {
-        public static void ClearEvaluation(IRecurrable recurrable)
-        {
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             evaluator?.Clear();
         }
 
-        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
-            new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
+    public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
+        new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
 
-        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
-        {
+    public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
+    {
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null || recurrable.Start == null)
             {
@@ -29,8 +29,7 @@ namespace Ical.Net.Evaluation
             var start = recurrable.Start;
             start.AssociatedObject = recurrable as ICalendarObject;
 
-            // Change the time zone of periodStart/periodEnd as needed 
-            // so they can be used during the evaluation process.
+            // Change the time zone of periodStart/periodEnd as needed      // so they can be used during the evaluation process.
 
             periodStart.TzId = start.TzId;
             periodEnd.TzId = start.TzId;
@@ -47,8 +46,8 @@ namespace Ical.Net.Evaluation
             return occurrences;
         }
 
-        public static bool?[] GetExpandBehaviorList(RecurrencePattern p)
-        {
+    public static bool?[] GetExpandBehaviorList(RecurrencePattern p)
+    {
             // See the table in RFC 5545 Section 3.3.10 (Page 43).
             switch (p.Frequency)
             {
@@ -91,5 +90,4 @@ namespace Ical.Net.Evaluation
                     return new bool?[] {false, null, false, false, false, false, false, false, false};
             }
         }
-    }
 }

@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public delegate Type TypeResolverDelegate(object context);
+
+internal class DataTypeMapper
 {
-    public delegate Type TypeResolverDelegate(object context);
-
-    internal class DataTypeMapper
+    private class PropertyMapping
     {
-        private class PropertyMapping
-        {
-            public Type ObjectType { get; set; }
-            public TypeResolverDelegate Resolver { get; set; }
-            public bool AllowsMultipleValuesPerProperty { get; set; }
-        }
+        public Type ObjectType { get; set; }
+        public TypeResolverDelegate Resolver { get; set; }
+        public bool AllowsMultipleValuesPerProperty { get; set; }
+    }
 
-        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
+    private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
 
-        public DataTypeMapper()
-        {
+    public DataTypeMapper()
+    {
             AddPropertyMapping(AlarmAction.Name, typeof (AlarmAction), false);
             AddPropertyMapping("ATTACH", typeof (Attachment), false);
             AddPropertyMapping("ATTENDEE", typeof (Attendee), false);
@@ -59,8 +59,8 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("URL", typeof (Uri), false);
         }
 
-        protected Type ResolveStatusProperty(object context)
-        {
+    protected Type ResolveStatusProperty(object context)
+    {
             if (!(context is ICalendarObject obj))
             {
                 return null;
@@ -79,8 +79,8 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
-        {
+    public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
+    {
             if (name == null || objectType == null)
             {
                 return;
@@ -95,8 +95,8 @@ namespace Ical.Net.Serialization
             _propertyMap[name] = m;
         }
 
-        public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
-        {
+    public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
+    {
             if (name == null || resolver == null)
             {
                 return;
@@ -111,24 +111,24 @@ namespace Ical.Net.Serialization
             _propertyMap[name] = m;
         }
 
-        public void RemovePropertyMapping(string name)
-        {
+    public void RemovePropertyMapping(string name)
+    {
             if (name != null && _propertyMap.ContainsKey(name))
             {
                 _propertyMap.Remove(name);
             }
         }
 
-        public virtual bool GetPropertyAllowsMultipleValues(object obj)
-        {
+    public virtual bool GetPropertyAllowsMultipleValues(object obj)
+    {
             var p = obj as ICalendarProperty;
             return !string.IsNullOrWhiteSpace(p?.Name)
                 && _propertyMap.TryGetValue(p.Name, out var m)
                 && m.AllowsMultipleValuesPerProperty;
         }
 
-        public virtual Type GetPropertyMapping(object obj)
-        {
+    public virtual Type GetPropertyMapping(object obj)
+    {
             var p = obj as ICalendarProperty;
             if (p?.Name == null)
             {
@@ -144,5 +144,4 @@ namespace Ical.Net.Serialization
                 ? m.ObjectType
                 : m.Resolver(p);
         }
-    }
 }

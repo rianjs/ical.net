@@ -7,17 +7,17 @@ using BenchmarkDotNet.Attributes;
 using Ical.Net;
 using Ical.Net.DataTypes;
 
-namespace PerfTests
-{
-    public class ApplicationWorkflows
-    {
-        private static readonly TimeSpan _oneYear = TimeSpan.FromDays(365);
-        private static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
-        private static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
-        private static readonly List<string> _manyCalendars = GetIcalStrings();
+namespace PerfTests;
 
-        private static List<string> GetIcalStrings()
-        {
+public class ApplicationWorkflows
+{
+    private static readonly TimeSpan _oneYear = TimeSpan.FromDays(365);
+    private static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
+    private static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
+    private static readonly List<string> _manyCalendars = GetIcalStrings();
+
+    private static List<string> GetIcalStrings()
+    {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
             return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
@@ -29,9 +29,9 @@ namespace PerfTests
                 .ToList();
         }
 
-        [Benchmark]
-        public List<Occurrence> SingleThreaded()
-        {
+    [Benchmark]
+    public List<Occurrence> SingleThreaded()
+    {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
@@ -39,9 +39,9 @@ namespace PerfTests
                 .ToList();
         }
 
-        [Benchmark]
-        public List<Occurrence> ParallelUponDeserialize()
-        {
+    [Benchmark]
+    public List<Occurrence> ParallelUponDeserialize()
+    {
             return _manyCalendars
                 .AsParallel()
                 .SelectMany(Calendar.Load<Calendar>)
@@ -50,9 +50,9 @@ namespace PerfTests
                 .ToList();
         }
 
-        [Benchmark]
-        public List<Occurrence> ParallelUponGetOccurrences()
-        {
+    [Benchmark]
+    public List<Occurrence> ParallelUponGetOccurrences()
+    {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
@@ -61,9 +61,9 @@ namespace PerfTests
                 .ToList();
         }
 
-        [Benchmark]
-        public List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
-        {
+    [Benchmark]
+    public List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
+    {
             return _manyCalendars
                 .AsParallel()
                 .SelectMany(Calendar.Load<Calendar>)
@@ -72,5 +72,4 @@ namespace PerfTests
                 .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
                 .ToList();
         }
-    }
 }

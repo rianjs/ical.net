@@ -12,21 +12,21 @@ using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
 
-namespace Ical.Net.CoreUnitTests
-{
-    [TestFixture]
-    public class SerializationTests
-    {
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+namespace Ical.Net.CoreUnitTests;
 
-        public static void CompareCalendars(Calendar cal1, Calendar cal2)
-        {
+[TestFixture]
+public class SerializationTests
+{
+    private static readonly DateTime _nowTime = DateTime.Now;
+    private static readonly DateTime _later = _nowTime.AddHours(1);
+    private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+    private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+    private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+    private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+
+    public static void CompareCalendars(Calendar cal1, Calendar cal2)
+    {
             CompareComponents(cal1, cal2);
 
             Assert.AreEqual(cal1.Children.Count, cal2.Children.Count, "Children count is different between calendars.");
@@ -42,8 +42,8 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
-        public static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
-        {
+    public static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
+    {
             foreach (var p1 in cb1.Properties)
             {
                 var isMatch = false;
@@ -91,8 +91,8 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
-        public static void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
-        {
+    public static void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
+    {
             if (a1 == null && a2 == null)
             {
                 return;
@@ -109,8 +109,8 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
-        public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
-        {
+    public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
+    {
             const string notFound = "expected '{0}' not found";
             var searchFor = "BEGIN:" + sectionName;
             var begin = serialized.IndexOf(searchFor);
@@ -130,11 +130,11 @@ namespace Ical.Net.CoreUnitTests
             return searchRegion;
         }
 
-        //3 formats - UTC, local time as defined in vTimeZone, and floating,
-        //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
-        //http://www.kanzaki.com/docs/ical/dateTime.html
-        static string CalDateString(IDateTime cdt)
-        {
+    //3 formats - UTC, local time as defined in vTimeZone, and floating,
+    //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
+    //http://www.kanzaki.com/docs/ical/dateTime.html
+    static string CalDateString(IDateTime cdt)
+    {
             var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
             if (cdt.IsUtc)
             {
@@ -146,9 +146,9 @@ namespace Ical.Net.CoreUnitTests
                 : $"TZID={cdt.TzId}:{returnVar}";
         }
 
-        //This method needs renaming
-        static Dictionary<string, string> GetValues(string serialized, string name, string value)
-        {
+    //This method needs renaming
+    static Dictionary<string, string> GetValues(string serialized, string name, string value)
+    {
             var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
             var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
@@ -158,9 +158,9 @@ namespace Ical.Net.CoreUnitTests
                 : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
         }
 
-        [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
-        public void TimeZoneSerialize()
-        {
+    [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
+    public void TimeZoneSerialize()
+    {
             //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
@@ -195,9 +195,9 @@ namespace Ical.Net.CoreUnitTests
 
             InspectSerializedSection(vTimezone, "DAYLIGHT", new[] { "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o });
         }
-        [Test, Category("Serialization")]
-        public void SerializeDeserialize()
-        {
+    [Test, Category("Serialization")]
+    public void SerializeDeserialize()
+    {
             //ToDo: This test is broken as of 2016-07-13
             var cal1 = new Calendar
             {
@@ -227,9 +227,9 @@ namespace Ical.Net.CoreUnitTests
             CompareCalendars(cal1, cal2);
         }
 
-        [Test, Category("Serialization")]
-        public void EventPropertiesSerialized()
-        {
+    [Test, Category("Serialization")]
+    public void EventPropertiesSerialized()
+    {
             //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
@@ -280,27 +280,27 @@ namespace Ical.Net.CoreUnitTests
                 });
         }
 
-        private static readonly IList<Attendee> _attendees = new List<Attendee>
+    private static readonly IList<Attendee> _attendees = new List<Attendee>
+    {
+        new Attendee("MAILTO:james@example.com")
         {
-            new Attendee("MAILTO:james@example.com")
-            {
-                CommonName = "James James",
-                Role = ParticipationRole.RequiredParticipant,
-                Rsvp = true,
-                ParticipationStatus = EventParticipationStatus.Tentative
-            },
-            new Attendee("MAILTO:mary@example.com")
-            {
-                CommonName = "Mary Mary",
-                Role = ParticipationRole.RequiredParticipant,
-                Rsvp = true,
-                ParticipationStatus = EventParticipationStatus.Accepted
-            }
-        }.AsReadOnly();
+            CommonName = "James James",
+            Role = ParticipationRole.RequiredParticipant,
+            Rsvp = true,
+            ParticipationStatus = EventParticipationStatus.Tentative
+        },
+        new Attendee("MAILTO:mary@example.com")
+        {
+            CommonName = "Mary Mary",
+            Role = ParticipationRole.RequiredParticipant,
+            Rsvp = true,
+            ParticipationStatus = EventParticipationStatus.Accepted
+        }
+    }.AsReadOnly();
 
-        [Test, Category("Serialization")]
-        public void AttendeesSerialized()
-        {
+    [Test, Category("Serialization")]
+    public void AttendeesSerialized()
+    {
             //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
@@ -341,20 +341,20 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
-        //todo test event:
-        //-GeographicLocation
-        //-Alarm
+    //todo test event:
+    //-GeographicLocation
+    //-Alarm
 
-        [Test]
-        public void ZeroTimeSpan_Test()
-        {
+    [Test]
+    public void ZeroTimeSpan_Test()
+    {
             var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
             Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
         }
 
-        [Test]
-        public void DurationIsStable_Tests()
-        {
+    [Test]
+    public void DurationIsStable_Tests()
+    {
             var e = GetSimpleEvent();
             var originalDuration = e.Duration;
             var c = new Calendar();
@@ -364,9 +364,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(!serialized.Contains("DURATION"));
         }
 
-        [Test]
-        public void EventStatusAllCaps()
-        {
+    [Test]
+    public void EventStatusAllCaps()
+    {
             var e = GetSimpleEvent();
             e.Status = EventStatus.Confirmed;
             var serialized = SerializeToString(e);
@@ -377,9 +377,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison));
         }
 
-        [Test]
-        public void ToDoStatusAllCaps()
-        {
+    [Test]
+    public void ToDoStatusAllCaps()
+    {
             var component = new Todo
             {
                 Status = TodoStatus.NeedsAction
@@ -394,9 +394,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison));
         }
 
-        [Test]
-        public void JournalStatusAllCaps()
-        {
+    [Test]
+    public void JournalStatusAllCaps()
+    {
             var component = new Journal
             {
                 Status = JournalStatus.Final,
@@ -411,9 +411,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison));
         }
 
-        [Test]
-        public void UnicodeDescription()
-        {
+    [Test]
+    public void UnicodeDescription()
+    {
             const string ics = @"BEGIN:VEVENT
 DTSTAMP:20171120T124856Z
 DTSTART;TZID=Europe/Helsinki:20160707T110000
@@ -443,9 +443,9 @@ END:VEVENT";
             Assert.IsTrue(deserializedEvent.Description.Contains("�"));
         }
         
-        [Test]
-        public void TestStandardDaylightTimeZoneInfoDeserialization()
-        {
+    [Test]
+    public void TestStandardDaylightTimeZoneInfoDeserialization()
+    {
 
             const string ics = @"BEGIN:VTIMEZONE
 TZID:
@@ -475,9 +475,9 @@ END:VTIMEZONE";
             Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[1].OffsetTo);
         }
 
-        [Test]
-        public void TestRRuleUntilSerialization()
-        {
+    [Test]
+    public void TestRRuleUntilSerialization()
+    {
             var rrule = new RecurrencePattern(FrequencyType.Daily)
             {
                 Until = _nowTime.AddDays(7),
@@ -503,9 +503,9 @@ END:VTIMEZONE";
             Assert.IsTrue(!until.EndsWith("Z"));
         }
 
-        [Test(Description = "PRODID and VERSION should use ical.net values instead of preserving deserialized values")]
-        public void LibraryMetadataTests()
-        {
+    [Test(Description = "PRODID and VERSION should use ical.net values instead of preserving deserialized values")]
+    public void LibraryMetadataTests()
+    {
             var c = new Calendar
             {
                 ProductId = "FOO",
@@ -519,9 +519,9 @@ END:VTIMEZONE";
             Assert.IsTrue(serialized.Contains(expectedVersion, StringComparison.Ordinal));
         }
 
-        [Test]
-        public void AttachmentFormatType()
-        {
+    [Test]
+    public void AttachmentFormatType()
+    {
             var cal1 = new Calendar
             {
                 Events =
@@ -544,9 +544,9 @@ END:VTIMEZONE";
             Assert.AreEqual("application/json", cal2.Events.Single().Attachments.Single().FormatType);
         }
 
-        [Test(Description = "It should be possible to serialize a calendar component instead of a whole calendar")]
-        public void SerializeSubcomponent()
-        {
+    [Test(Description = "It should be possible to serialize a calendar component instead of a whole calendar")]
+    public void SerializeSubcomponent()
+    {
             const string expectedString = "This is an expected string";
             var e = new CalendarEvent
             {
@@ -559,5 +559,4 @@ END:VTIMEZONE";
             Assert.IsTrue(serialized.Contains(expectedString, StringComparison.Ordinal));
             Assert.IsTrue(!serialized.Contains("VCALENDAR", StringComparison.Ordinal));
         }
-    }
 }

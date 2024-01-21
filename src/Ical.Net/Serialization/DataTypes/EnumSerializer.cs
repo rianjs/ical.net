@@ -2,26 +2,26 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class EnumSerializer : EncodableDataTypeSerializer
 {
-    public class EnumSerializer : EncodableDataTypeSerializer
+    private readonly Type _mEnumType;
+
+    public EnumSerializer(Type enumType)
     {
-        private readonly Type _mEnumType;
-
-        public EnumSerializer(Type enumType)
-        {
             _mEnumType = enumType;
         }
 
-        public EnumSerializer(Type enumType, SerializationContext ctx) : base(ctx)
-        {
+    public EnumSerializer(Type enumType, SerializationContext ctx) : base(ctx)
+    {
             _mEnumType = enumType;
         }
 
-        public override Type TargetType => _mEnumType;
+    public override Type TargetType => _mEnumType;
 
-        public override string SerializeToString(object enumValue)
-        {
+    public override string SerializeToString(object enumValue)
+    {
             try
             {
                 var obj = SerializationContext.Peek() as ICalendarObject;
@@ -42,8 +42,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             try
@@ -66,5 +66,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return value;
         }
-    }
 }

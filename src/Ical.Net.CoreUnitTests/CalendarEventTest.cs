@@ -7,160 +7,160 @@ using Ical.Net.Serialization;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.CoreUnitTests
+namespace Ical.Net.CoreUnitTests;
+
+[TestFixture]
+public class CalendarEventTest
 {
-    [TestFixture]
-    public class CalendarEventTest
+    private static readonly DateTime _now = DateTime.UtcNow;
+    private static readonly DateTime _later = _now.AddHours(1);
+    private static readonly string _uid = Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// Ensures that events can be properly added to a calendar.
+    /// </summary>
+    [Test, Category("CalendarEvent")]
+    public void Add1()
     {
-        private static readonly DateTime _now = DateTime.UtcNow;
-        private static readonly DateTime _later = _now.AddHours(1);
-        private static readonly string _uid = Guid.NewGuid().ToString();
+        var cal = new Calendar();
 
-        /// <summary>
-        /// Ensures that events can be properly added to a calendar.
-        /// </summary>
-        [Test, Category("CalendarEvent")]
-        public void Add1()
+        var evt = new CalendarEvent
         {
-            var cal = new Calendar();
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
-            var evt = new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
+        cal.Events.Add(evt);
+        Assert.AreEqual(1, cal.Children.Count);
+        Assert.AreSame(evt, cal.Children[0]);
+    }
 
-            cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
-        }
+    /// <summary>
+    /// Ensures that events can be properly removed from a calendar.
+    /// </summary>
+    [Test, Category("CalendarEvent")]
+    public void Remove1()
+    {
+        var cal = new Calendar();
 
-        /// <summary>
-        /// Ensures that events can be properly removed from a calendar.
-        /// </summary>
-        [Test, Category("CalendarEvent")]
-        public void Remove1()
+        var evt = new CalendarEvent
         {
-            var cal = new Calendar();
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
-            var evt = new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
+        cal.Events.Add(evt);
+        Assert.AreEqual(1, cal.Children.Count);
+        Assert.AreSame(evt, cal.Children[0]);
 
-            cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
+        cal.RemoveChild(evt);
+        Assert.AreEqual(0, cal.Children.Count);
+        Assert.AreEqual(0, cal.Events.Count);
+    }
 
-            cal.RemoveChild(evt);
-            Assert.AreEqual(0, cal.Children.Count);
-            Assert.AreEqual(0, cal.Events.Count);
-        }
+    /// <summary>
+    /// Ensures that events can be properly removed from a calendar.
+    /// </summary>
+    [Test, Category("CalendarEvent")]
+    public void Remove2()
+    {
+        var cal = new Calendar();
 
-        /// <summary>
-        /// Ensures that events can be properly removed from a calendar.
-        /// </summary>
-        [Test, Category("CalendarEvent")]
-        public void Remove2()
+        var evt = new CalendarEvent
         {
-            var cal = new Calendar();
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
-            var evt = new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
+        cal.Events.Add(evt);
+        Assert.AreEqual(1, cal.Children.Count);
+        Assert.AreSame(evt, cal.Children[0]);
 
-            cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
+        cal.Events.Remove(evt);
+        Assert.AreEqual(0, cal.Children.Count);
+        Assert.AreEqual(0, cal.Events.Count);
+    }
 
-            cal.Events.Remove(evt);
-            Assert.AreEqual(0, cal.Children.Count);
-            Assert.AreEqual(0, cal.Events.Count);
-        }
+    /// <summary>
+    /// Ensures that event DTSTAMP is set.
+    /// </summary>
+    [Test, Category("CalendarEvent")]
+    public void EnsureDTSTAMPisNotNull()
+    {
+        var cal = new Calendar();
 
-        /// <summary>
-        /// Ensures that event DTSTAMP is set.
-        /// </summary>
-        [Test, Category("CalendarEvent")]
-        public void EnsureDTSTAMPisNotNull()
+        // Do not set DTSTAMP manually
+        var evt = new CalendarEvent
         {
-            var cal = new Calendar();
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
-            // Do not set DTSTAMP manually
-            var evt = new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
+        cal.Events.Add(evt);
+        Assert.IsNotNull(evt.DtStamp);
+    }
 
-            cal.Events.Add(evt);
-            Assert.IsNotNull(evt.DtStamp);
-        }
+    /// <summary>
+    /// Ensures that automatically set DTSTAMP property is of kind UTC.
+    /// </summary>
+    [Test, Category("CalendarEvent")]
+    public void EnsureDTSTAMPisOfTypeUTC()
+    {
+        var cal = new Calendar();
 
-        /// <summary>
-        /// Ensures that automatically set DTSTAMP property is of kind UTC.
-        /// </summary>
-        [Test, Category("CalendarEvent")]
-        public void EnsureDTSTAMPisOfTypeUTC()
+        var evt = new CalendarEvent
         {
-            var cal = new Calendar();
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
-            var evt = new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
+        cal.Events.Add(evt);
+        Assert.IsTrue(evt.DtStamp.IsUtc, "DTSTAMP should always be of type UTC.");
+    }
 
-            cal.Events.Add(evt);
-            Assert.IsTrue(evt.DtStamp.IsUtc, "DTSTAMP should always be of type UTC.");
-        }
+    /// <summary>
+    /// Ensures that automatically set DTSTAMP property is being serialized with kind UTC.
+    /// </summary>
+    [Test, Category("Deserialization"), TestCaseSource(nameof(EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases))]
+    public bool EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC(string serialized)
+    {
+        var lines = serialized.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        var result = lines.First(s => s.StartsWith("DTSTAMP"));
 
-        /// <summary>
-        /// Ensures that automatically set DTSTAMP property is being serialized with kind UTC.
-        /// </summary>
-        [Test, Category("Deserialization"), TestCaseSource(nameof(EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases))]
-        public bool EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC(string serialized)
+        return !result.Contains("TZID=") && result.EndsWith("Z");
+    }
+
+    public static IEnumerable<ITestCaseData> EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases()
+    {
+        var emptyCalendar = new Calendar();
+        var evt = new CalendarEvent();
+        emptyCalendar.Events.Add(evt);
+
+        var serializer = new CalendarSerializer();
+        yield return new TestCaseData(serializer.SerializeToString(emptyCalendar))
+            .SetName("Empty calendar with empty event returns true")
+            .Returns(true);
+
+        var explicitDtStampCalendar = new Calendar();
+        var explicitDtStampEvent = new CalendarEvent
         {
-            var lines = serialized.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            var result = lines.First(s => s.StartsWith("DTSTAMP"));
+            DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
+        };
+        explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
+        yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
+            .SetName("CalendarEvent with explicitly-set DTSTAMP property returns true")
+            .Returns(true);
+    }
 
-            return !result.Contains("TZID=") && result.EndsWith("Z");
-        }
-
-        public static IEnumerable<ITestCaseData> EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases()
-        {
-            var emptyCalendar = new Calendar();
-            var evt = new CalendarEvent();
-            emptyCalendar.Events.Add(evt);
-
-            var serializer = new CalendarSerializer();
-            yield return new TestCaseData(serializer.SerializeToString(emptyCalendar))
-                .SetName("Empty calendar with empty event returns true")
-                .Returns(true);
-
-            var explicitDtStampCalendar = new Calendar();
-            var explicitDtStampEvent = new CalendarEvent
-            {
-                DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
-            };
-            explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
-            yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
-                .SetName("CalendarEvent with explicitly-set DTSTAMP property returns true")
-                .Returns(true);
-        }
-
-        [Test]
-        public void EventWithExDateShouldNotBeEqualToSameEventWithoutExDate()
-        {
-            const string icalNoException = @"BEGIN:VCALENDAR
+    [Test]
+    public void EventWithExDateShouldNotBeEqualToSameEventWithoutExDate()
+    {
+        const string icalNoException = @"BEGIN:VCALENDAR
 PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -183,7 +183,7 @@ RRULE:FREQ=DAILY
 END:VEVENT
 END:VCALENDAR";
 
-            const string icalWithException = @"BEGIN:VCALENDAR
+        const string icalWithException = @"BEGIN:VCALENDAR
 PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -207,120 +207,120 @@ EXDATE;TZID=UTC:20161020T170000
 END:VEVENT
 END:VCALENDAR";
 
-            var noException = Calendar.Load(icalNoException).Events.First();
-            var withException = Calendar.Load(icalWithException).Events.First();
+        var noException = Calendar.Load(icalNoException).Events.First();
+        var withException = Calendar.Load(icalWithException).Events.First();
 
-            Assert.AreNotEqual(noException, withException);
-            Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
-        }
+        Assert.AreNotEqual(noException, withException);
+        Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
+    }
 
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent
-        {
-            DtStart = new CalDateTime(_now),
-            DtEnd = new CalDateTime(_later),
-            Uid = _uid,
-        };
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent
+    {
+        DtStart = new CalDateTime(_now),
+        DtEnd = new CalDateTime(_later),
+        Uid = _uid,
+    };
 
-        [Test]
-        public void RrulesAreSignificantTests()
-        {
-            var rrule = new RecurrencePattern(FrequencyType.Daily, 1);
-            var testRrule = GetSimpleEvent();
-            testRrule.RecurrenceRules = new List<RecurrencePattern> { rrule };
+    [Test]
+    public void RrulesAreSignificantTests()
+    {
+        var rrule = new RecurrencePattern(FrequencyType.Daily, 1);
+        var testRrule = GetSimpleEvent();
+        testRrule.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
-            var simpleEvent = GetSimpleEvent();
-            Assert.AreNotEqual(simpleEvent, testRrule);
-            Assert.AreNotEqual(simpleEvent.GetHashCode(), testRrule.GetHashCode());
+        var simpleEvent = GetSimpleEvent();
+        Assert.AreNotEqual(simpleEvent, testRrule);
+        Assert.AreNotEqual(simpleEvent.GetHashCode(), testRrule.GetHashCode());
 
-            var testRdate = GetSimpleEvent();
-            testRdate.RecurrenceDates = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
-            Assert.AreNotEqual(simpleEvent, testRdate);
-            Assert.AreNotEqual(simpleEvent.GetHashCode(), testRdate.GetHashCode());
-        }
+        var testRdate = GetSimpleEvent();
+        testRdate.RecurrenceDates = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
+        Assert.AreNotEqual(simpleEvent, testRdate);
+        Assert.AreNotEqual(simpleEvent.GetHashCode(), testRdate.GetHashCode());
+    }
 
-        private static List<RecurrencePattern> GetSimpleRecurrenceList()
-            => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
-        private static List<PeriodList> GetExceptionDates()
-            => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
+    private static List<RecurrencePattern> GetSimpleRecurrenceList()
+        => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
+    private static List<PeriodList> GetExceptionDates()
+        => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
 
-        [Test]
-        public void EventWithRecurrenceAndExceptionComparison()
-        {
-            var vEvent = GetSimpleEvent();
-            vEvent.RecurrenceRules = GetSimpleRecurrenceList();
-            vEvent.ExceptionDates = GetExceptionDates();
+    [Test]
+    public void EventWithRecurrenceAndExceptionComparison()
+    {
+        var vEvent = GetSimpleEvent();
+        vEvent.RecurrenceRules = GetSimpleRecurrenceList();
+        vEvent.ExceptionDates = GetExceptionDates();
 
-            var calendar = new Calendar();
-            calendar.Events.Add(vEvent);
+        var calendar = new Calendar();
+        calendar.Events.Add(vEvent);
 
-            var vEvent2 = GetSimpleEvent();
-            vEvent2.RecurrenceRules = GetSimpleRecurrenceList();
-            vEvent2.ExceptionDates = GetExceptionDates();
+        var vEvent2 = GetSimpleEvent();
+        vEvent2.RecurrenceRules = GetSimpleRecurrenceList();
+        vEvent2.ExceptionDates = GetExceptionDates();
 
-            var cal2 = new Calendar();
-            cal2.Events.Add(vEvent2);
+        var cal2 = new Calendar();
+        cal2.Events.Add(vEvent2);
 
-            var eventA = calendar.Events.First();
-            var eventB = cal2.Events.First();
+        var eventA = calendar.Events.First();
+        var eventB = cal2.Events.First();
 
-            Assert.AreEqual(eventA.RecurrenceRules.First(), eventB.RecurrenceRules.First());
-            Assert.AreEqual(eventA.RecurrenceRules.First().GetHashCode(), eventB.RecurrenceRules.First().GetHashCode());
-            Assert.AreEqual(eventA.ExceptionDates.First(), eventB.ExceptionDates.First());
-            Assert.AreEqual(eventA.ExceptionDates.First().GetHashCode(), eventB.ExceptionDates.First().GetHashCode());
-            Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
-            Assert.AreEqual(eventA, eventB);
-            Assert.AreEqual(calendar, cal2);
-        }
+        Assert.AreEqual(eventA.RecurrenceRules.First(), eventB.RecurrenceRules.First());
+        Assert.AreEqual(eventA.RecurrenceRules.First().GetHashCode(), eventB.RecurrenceRules.First().GetHashCode());
+        Assert.AreEqual(eventA.ExceptionDates.First(), eventB.ExceptionDates.First());
+        Assert.AreEqual(eventA.ExceptionDates.First().GetHashCode(), eventB.ExceptionDates.First().GetHashCode());
+        Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
+        Assert.AreEqual(eventA, eventB);
+        Assert.AreEqual(calendar, cal2);
+    }
 
-        [Test]
-        public void AddingExdateToEventShouldNotBeEqualToOriginal()
-        {
-            //Create a calendar with an event with a recurrence rule
-            //Serialize to string, and deserialize
-            //Change the original calendar.Event to have an ExDate
-            //Serialize to string, and deserialize
-            //CalendarEvent and Calendar hash codes and equality should NOT be the same
-            var serializer = new CalendarSerializer();
+    [Test]
+    public void AddingExdateToEventShouldNotBeEqualToOriginal()
+    {
+        //Create a calendar with an event with a recurrence rule
+        //Serialize to string, and deserialize
+        //Change the original calendar.Event to have an ExDate
+        //Serialize to string, and deserialize
+        //CalendarEvent and Calendar hash codes and equality should NOT be the same
+        var serializer = new CalendarSerializer();
 
-            var vEvent = GetSimpleEvent();
-            vEvent.RecurrenceRules = GetSimpleRecurrenceList();
-            var cal1 = new Calendar();
-            cal1.Events.Add(vEvent);
-            var serialized = serializer.SerializeToString(cal1);
-            var deserializedNoExDate = Calendar.Load(serialized);
-            Assert.AreEqual(cal1, deserializedNoExDate);
+        var vEvent = GetSimpleEvent();
+        vEvent.RecurrenceRules = GetSimpleRecurrenceList();
+        var cal1 = new Calendar();
+        cal1.Events.Add(vEvent);
+        var serialized = serializer.SerializeToString(cal1);
+        var deserializedNoExDate = Calendar.Load(serialized);
+        Assert.AreEqual(cal1, deserializedNoExDate);
 
-            vEvent.ExceptionDates = GetExceptionDates();
-            serialized = serializer.SerializeToString(cal1);
-            var deserializedWithExDate = Calendar.Load(serialized);
+        vEvent.ExceptionDates = GetExceptionDates();
+        serialized = serializer.SerializeToString(cal1);
+        var deserializedWithExDate = Calendar.Load(serialized);
 
-            Assert.AreNotEqual(deserializedNoExDate.Events.First(), deserializedWithExDate.Events.First());
-            Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
-            Assert.AreNotEqual(deserializedNoExDate, deserializedWithExDate);
-        }
+        Assert.AreNotEqual(deserializedNoExDate.Events.First(), deserializedWithExDate.Events.First());
+        Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
+        Assert.AreNotEqual(deserializedNoExDate, deserializedWithExDate);
+    }
 
-        [Test]
-        public void ChangingRrulesShouldNotBeEqualToOriginalEvent()
-        {
-            var eventA = GetSimpleEvent();
-            eventA.RecurrenceRules = GetSimpleRecurrenceList();
+    [Test]
+    public void ChangingRrulesShouldNotBeEqualToOriginalEvent()
+    {
+        var eventA = GetSimpleEvent();
+        eventA.RecurrenceRules = GetSimpleRecurrenceList();
 
-            var eventB = GetSimpleEvent();
-            eventB.RecurrenceRules = GetSimpleRecurrenceList();
-            Assert.IsFalse(ReferenceEquals(eventA, eventB));
-            Assert.AreEqual(eventA, eventB);
+        var eventB = GetSimpleEvent();
+        eventB.RecurrenceRules = GetSimpleRecurrenceList();
+        Assert.IsFalse(ReferenceEquals(eventA, eventB));
+        Assert.AreEqual(eventA, eventB);
 
-            var foreverDailyRule = new RecurrencePattern(FrequencyType.Daily, 1);
-            eventB.RecurrenceRules = new List<RecurrencePattern> { foreverDailyRule };
+        var foreverDailyRule = new RecurrencePattern(FrequencyType.Daily, 1);
+        eventB.RecurrenceRules = new List<RecurrencePattern> { foreverDailyRule };
 
-            Assert.AreNotEqual(eventA, eventB);
-            Assert.AreNotEqual(eventA.GetHashCode(), eventB.GetHashCode());
-        }
+        Assert.AreNotEqual(eventA, eventB);
+        Assert.AreNotEqual(eventA.GetHashCode(), eventB.GetHashCode());
+    }
 
-        [Test]
-        public void EventsDifferingByDtStampAreEqual()
-        {
-            const string eventA = @"BEGIN:VCALENDAR
+    [Test]
+    public void EventsDifferingByDtStampAreEqual()
+    {
+        const string eventA = @"BEGIN:VCALENDAR
 PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
 VERSION:2.0
 BEGIN:VEVENT
@@ -342,7 +342,7 @@ UID:04107254dc5c9094af71a0e197e65a557dfbcb84
 END:VEVENT
 END:VCALENDAR";
 
-            const string eventB = @"BEGIN:VCALENDAR
+        const string eventB = @"BEGIN:VCALENDAR
 PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
 VERSION:2.0
 BEGIN:VEVENT
@@ -364,39 +364,39 @@ UID:04107254dc5c9094af71a0e197e65a557dfbcb84
 END:VEVENT
 END:VCALENDAR";
 
-            var calendarA = Calendar.Load(eventA);
-            var calendarB = Calendar.Load(eventB);
+        var calendarA = Calendar.Load(eventA);
+        var calendarB = Calendar.Load(eventB);
 
-            Assert.AreEqual(calendarA.Events.First().GetHashCode(), calendarB.Events.First().GetHashCode());
-            Assert.AreEqual(calendarA.Events.First(), calendarB.Events.First());
-            Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
-            Assert.AreEqual(calendarA, calendarB);
-        }
+        Assert.AreEqual(calendarA.Events.First().GetHashCode(), calendarB.Events.First().GetHashCode());
+        Assert.AreEqual(calendarA.Events.First(), calendarB.Events.First());
+        Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
+        Assert.AreEqual(calendarA, calendarB);
+    }
 
-        [Test]
-        public void EventResourcesCanBeZeroedOut()
-        {
-            var e = GetSimpleEvent();
-            var resources = new[] { "Foo", "Bar", "Baz" };
+    [Test]
+    public void EventResourcesCanBeZeroedOut()
+    {
+        var e = GetSimpleEvent();
+        var resources = new[] { "Foo", "Bar", "Baz" };
 
-            e.Resources = new List<string>(resources);
-            CollectionAssert.AreEquivalent(e.Resources, resources);
+        e.Resources = new List<string>(resources);
+        CollectionAssert.AreEquivalent(e.Resources, resources);
 
-            var newResources = new[] { "Hello", "Goodbye" };
-            e.Resources = new List<string>(newResources);
-            CollectionAssert.AreEquivalent(e.Resources, newResources);
-            Assert.IsFalse(e.Resources.Any(r => resources.Contains(r)));
+        var newResources = new[] { "Hello", "Goodbye" };
+        e.Resources = new List<string>(newResources);
+        CollectionAssert.AreEquivalent(e.Resources, newResources);
+        Assert.IsFalse(e.Resources.Any(r => resources.Contains(r)));
 
-            e.Resources = null;
-            //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
-            Assert.AreEqual(0, e.Resources?.Count);
-        }
+        e.Resources = null;
+        //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
+        Assert.AreEqual(0, e.Resources?.Count);
+    }
 
-        [Test]
-        public void HourMinuteSecondOffsetParsingTest()
-        {
-            const string ical =
-@"BEGIN:VCALENDAR
+    [Test]
+    public void HourMinuteSecondOffsetParsingTest()
+    {
+        const string ical =
+            @"BEGIN:VCALENDAR
 PRODID:-//1&1 Mail & Media GmbH/GMX Kalender Server 3.10.0//NONSGML//DE
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -421,22 +421,21 @@ RDATE:18800101T000000
 END:STANDARD
 END:VTIMEZONE
 END:VCALENDAR";
-            var timezones = Calendar.Load(ical)
-                .TimeZones.First()
-                .Children.Cast<CalendarComponent>();
+        var timezones = Calendar.Load(ical)
+            .TimeZones.First()
+            .Children.Cast<CalendarComponent>();
 
-            var positiveOffset = timezones
-                .Skip(1).Take(1).First()
-                .Properties.First().Value as UtcOffset;
-            var expectedPositive = TimeSpan.FromMinutes(17.5);
-            Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
+        var positiveOffset = timezones
+            .Skip(1).Take(1).First()
+            .Properties.First().Value as UtcOffset;
+        var expectedPositive = TimeSpan.FromMinutes(17.5);
+        Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
 
-            var negativeOffset = timezones
-                .First()
-                .Properties.First().Value as UtcOffset;
+        var negativeOffset = timezones
+            .First()
+            .Properties.First().Value as UtcOffset;
 
-            var expectedNegative = TimeSpan.FromMinutes(-17.5);
-            Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
-        }
+        var expectedNegative = TimeSpan.FromMinutes(-17.5);
+        Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
     }
 }

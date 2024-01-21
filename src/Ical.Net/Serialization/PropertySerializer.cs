@@ -5,18 +5,18 @@ using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class PropertySerializer : SerializerBase
 {
-    public class PropertySerializer : SerializerBase
+    public PropertySerializer() {}
+
+    public PropertySerializer(SerializationContext ctx) : base(ctx) {}
+
+    public override Type TargetType => typeof (CalendarProperty);
+
+    public override string SerializeToString(object obj)
     {
-        public PropertySerializer() {}
-
-        public PropertySerializer(SerializationContext ctx) : base(ctx) {}
-
-        public override Type TargetType => typeof (CalendarProperty);
-
-        public override string SerializeToString(object obj)
-        {
             var prop = obj as ICalendarProperty;
             if (prop?.Values == null || !prop.Values.Any())
             {
@@ -44,8 +44,7 @@ namespace Ical.Net.Serialization
                 // same property.  How should we fix this?
 
                 // NOTE:
-                // We Serialize the property's value first, as during 
-                // serialization it may modify our parameters.
+                // We Serialize the property's value first, as during      // serialization it may modify our parameters.
                 // FIXME: the "parameter modification" operation should
                 // be separated from serialization. Perhaps something
                 // like PreSerialize(), etc.
@@ -97,6 +96,5 @@ namespace Ical.Net.Serialization
             return result.ToString();
         }
 
-        public override object Deserialize(TextReader tr) => null;
-    }
+    public override object Deserialize(TextReader tr) => null;
 }

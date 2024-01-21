@@ -1,14 +1,13 @@
 ﻿using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization;
 
-namespace Ical.Net.CoreUnitTests
-{
-    internal class SerializationHelpers
-    {
-        public static string SerializeToString(CalendarEvent calendarEvent)
-            => SerializeToString(new Calendar { Events = { calendarEvent } });
+namespace Ical.Net.CoreUnitTests;
 
-        public static string SerializeToString(Calendar iCalendar)
-            => new CalendarSerializer().SerializeToString(iCalendar);
-    }
+internal class SerializationHelpers
+{
+    public static string SerializeToString(CalendarEvent calendarEvent)
+        => SerializeToString(new Calendar { Events = { calendarEvent } });
+
+    public static string SerializeToString(Calendar iCalendar)
+        => new CalendarSerializer().SerializeToString(iCalendar);
 }

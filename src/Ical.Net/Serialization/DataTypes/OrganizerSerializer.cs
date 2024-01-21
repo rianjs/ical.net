@@ -2,18 +2,18 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class OrganizerSerializer : StringSerializer
 {
-    public class OrganizerSerializer : StringSerializer
+    public OrganizerSerializer() { }
+
+    public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (Organizer);
+
+    public override string SerializeToString(object obj)
     {
-        public OrganizerSerializer() { }
-
-        public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (Organizer);
-
-        public override string SerializeToString(object obj)
-        {
             try
             {
                 var o = obj as Organizer;
@@ -27,8 +27,8 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             Organizer o = null;
@@ -52,5 +52,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return o;
         }
-    }
 }

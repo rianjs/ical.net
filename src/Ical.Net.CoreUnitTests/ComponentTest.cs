@@ -3,13 +3,13 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 
-namespace Ical.Net.CoreUnitTests
+namespace Ical.Net.CoreUnitTests;
+
+public class ComponentTest
 {
-    public class ComponentTest
+    [Test, Category("Components")]
+    public void UniqueComponent1()
     {
-        [Test, Category("Components")]
-        public void UniqueComponent1()
-        {
             var iCal = new Calendar();
             var evt = iCal.Create<CalendarEvent>();
 
@@ -18,9 +18,9 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsNotNull(evt.DtStamp);
         }
 
-        [Test, Category("Components")]
-        public void ChangeCalDateTimeValue()
-        {
+    [Test, Category("Components")]
+    public void ChangeCalDateTimeValue()
+    {
             var e = new CalendarEvent
             {
                 Start = new CalDateTime(2017, 11, 22, 11, 00, 01),
@@ -39,5 +39,4 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreNotEqual(firstStartAsUtc, secondStartAsUtc);
             Assert.AreNotEqual(firstEndAsUtc, secondEndAsUtc);
         }
-    }
 }

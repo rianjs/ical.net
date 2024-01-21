@@ -4,18 +4,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class RequestStatusSerializer : StringSerializer
 {
-    public class RequestStatusSerializer : StringSerializer
+    public RequestStatusSerializer() { }
+
+    public RequestStatusSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (RequestStatus);
+
+    public override string SerializeToString(object obj)
     {
-        public RequestStatusSerializer() { }
-
-        public RequestStatusSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (RequestStatus);
-
-        public override string SerializeToString(object obj)
-        {
             try
             {
                 var rs = obj as RequestStatus;
@@ -59,11 +59,11 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        internal static readonly Regex NarrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
-        internal static readonly Regex BroadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
+    internal static readonly Regex NarrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
+    internal static readonly Regex BroadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             var rs = CreateAndAssociate() as RequestStatus;
@@ -117,5 +117,4 @@ namespace Ical.Net.Serialization.DataTypes
             }
             return null;
         }
-    }
 }

@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class CalendarSerializer : ComponentSerializer
 {
-    public class CalendarSerializer : ComponentSerializer
+    private readonly Calendar _calendar;
+
+    public CalendarSerializer()
+        :this(new SerializationContext()) { }
+
+    public CalendarSerializer(Calendar cal)
     {
-        private readonly Calendar _calendar;
-
-        public CalendarSerializer()
-            :this(new SerializationContext()) { }
-
-        public CalendarSerializer(Calendar cal)
-        {
             _calendar = cal;
         }
 
-        public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
+    public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
-        public virtual string SerializeToString() => SerializeToString(_calendar);
+    public virtual string SerializeToString() => SerializeToString(_calendar);
 
-        protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
+    protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
-        public override string SerializeToString(object obj)
-        {
+    public override string SerializeToString(object obj)
+    {
             if (obj is Calendar)
             {
                 // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
@@ -37,12 +37,12 @@ namespace Ical.Net.Serialization
             return base.SerializeToString(obj);
         }
 
-        public override object Deserialize(TextReader tr) => null;
+    public override object Deserialize(TextReader tr) => null;
 
-        private class CalendarPropertySorter : IComparer<ICalendarProperty>
+    private class CalendarPropertySorter : IComparer<ICalendarProperty>
+    {
+        public int Compare(ICalendarProperty x, ICalendarProperty y)
         {
-            public int Compare(ICalendarProperty x, ICalendarProperty y)
-            {
                 if (x == y)
                 {
                     return 0;
@@ -55,8 +55,7 @@ namespace Ical.Net.Serialization
                 {
                     return 1;
                 }
-                // Alphabetize all properties except VERSION, which should appear first. 
-                if (string.Equals("VERSION", x.Name, StringComparison.OrdinalIgnoreCase))
+                // Alphabetize all properties except VERSION, which should appear first.          if (string.Equals("VERSION", x.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
@@ -64,6 +63,5 @@ namespace Ical.Net.Serialization
                     ? 1
                     : string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
             }
-        }
     }
 }

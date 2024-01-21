@@ -6,38 +6,38 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class SimpleDeserializer
 {
-    public class SimpleDeserializer
+    internal SimpleDeserializer(
+        DataTypeMapper dataTypeMapper,
+        ISerializerFactory serializerFactory,
+        CalendarComponentFactory componentFactory)
     {
-        internal SimpleDeserializer(
-            DataTypeMapper dataTypeMapper,
-            ISerializerFactory serializerFactory,
-            CalendarComponentFactory componentFactory)
-        {
             _dataTypeMapper = dataTypeMapper;
             _serializerFactory = serializerFactory;
             _componentFactory = componentFactory;
         }
 
-        public static readonly SimpleDeserializer Default = new SimpleDeserializer(
-            new DataTypeMapper(),
-            new SerializerFactory(),
-            new CalendarComponentFactory());
+    public static readonly SimpleDeserializer Default = new SimpleDeserializer(
+        new DataTypeMapper(),
+        new SerializerFactory(),
+        new CalendarComponentFactory());
 
-        private const string _nameGroup = "name";
-        private const string _valueGroup = "value";
-        private const string _paramNameGroup = "paramName";
-        private const string _paramValueGroup = "paramValue";
+    private const string _nameGroup = "name";
+    private const string _valueGroup = "value";
+    private const string _paramNameGroup = "paramName";
+    private const string _paramValueGroup = "paramValue";
 
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+    private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
 
-        private readonly DataTypeMapper _dataTypeMapper;
-        private readonly ISerializerFactory _serializerFactory;
-        private readonly CalendarComponentFactory _componentFactory;
+    private readonly DataTypeMapper _dataTypeMapper;
+    private readonly ISerializerFactory _serializerFactory;
+    private readonly CalendarComponentFactory _componentFactory;
 
-        private static string BuildContentLineRegex()
-        {
+    private static string BuildContentLineRegex()
+    {
             // name          = iana-token / x-name
             // iana-token    = 1*(ALPHA / DIGIT / "-")
             // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
@@ -68,8 +68,8 @@ namespace Ical.Net.Serialization
             return contentLine;
         }
 
-        public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
-        {
+    public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
+    {
             var context = new SerializationContext();
             var stack = new Stack<ICalendarComponent>();
             var current = default(ICalendarComponent);
@@ -118,8 +118,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private CalendarProperty ParseContentLine(SerializationContext context, string input)
-        {
+    private CalendarProperty ParseContentLine(SerializationContext context, string input)
+    {
             var match = _contentLineRegex.Match(input);
             if (!match.Success)
             {
@@ -138,8 +138,8 @@ namespace Ical.Net.Serialization
             return property;
         }
 
-        private static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
-        {
+    private static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
+    {
             var paramValueIndex = 0;
             for (var paramNameIndex = 0; paramNameIndex < paramNames.Count; paramNameIndex++)
             {
@@ -156,8 +156,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
-        {
+    private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
+    {
             var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
             var serializer = (SerializerBase)_serializerFactory.Build(type, context);
             using (var valueReader = new StringReader(value))
@@ -178,8 +178,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private static IEnumerable<string> GetContentLines(TextReader reader)
-        {
+    private static IEnumerable<string> GetContentLines(TextReader reader)
+    {
             var currentLine = new StringBuilder();
             while (true)
             {
@@ -213,5 +213,4 @@ namespace Ical.Net.Serialization
                 yield return currentLine.ToString();
             }
         }
-    }
 }

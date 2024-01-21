@@ -3,18 +3,18 @@ using System.Globalization;
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class GeographicLocationSerializer : EncodableDataTypeSerializer
 {
-    public class GeographicLocationSerializer : EncodableDataTypeSerializer
+    public GeographicLocationSerializer() { }
+
+    public GeographicLocationSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (GeographicLocation);
+
+    public override string SerializeToString(object obj)
     {
-        public GeographicLocationSerializer() { }
-
-        public GeographicLocationSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (GeographicLocation);
-
-        public override string SerializeToString(object obj)
-        {
             var g = obj as GeographicLocation;
             if (g == null)
             {
@@ -26,8 +26,8 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(g, value);
         }
 
-        public GeographicLocation Deserialize(string value)
-        {
+    public GeographicLocation Deserialize(string value)
+    {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return null;
@@ -58,6 +58,5 @@ namespace Ical.Net.Serialization.DataTypes
             return g;
         }
 
-        public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
-    }
+    public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
 }

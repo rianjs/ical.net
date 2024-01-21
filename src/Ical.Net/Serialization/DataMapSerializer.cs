@@ -2,16 +2,16 @@
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class DataMapSerializer : SerializerBase
 {
-    public class DataMapSerializer : SerializerBase
+    public DataMapSerializer() {}
+
+    public DataMapSerializer(SerializationContext ctx) : base(ctx) {}
+
+    protected IStringSerializer GetMappedSerializer()
     {
-        public DataMapSerializer() {}
-
-        public DataMapSerializer(SerializationContext ctx) : base(ctx) {}
-
-        protected IStringSerializer GetMappedSerializer()
-        {
             var sf = GetService<ISerializerFactory>();
             var mapper = GetService<DataTypeMapper>();
             if (sf == null || mapper == null)
@@ -29,23 +29,23 @@ namespace Ical.Net.Serialization
                 : sf.Build(type, SerializationContext) as IStringSerializer;
         }
 
-        public override Type TargetType
+    public override Type TargetType
+    {
+        get
         {
-            get
-            {
                 ISerializer serializer = GetMappedSerializer();
                 return serializer?.TargetType;
             }
-        }
+    }
 
-        public override string SerializeToString(object obj)
-        {
+    public override string SerializeToString(object obj)
+    {
             var serializer = GetMappedSerializer();
             return serializer?.SerializeToString(obj);
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var serializer = GetMappedSerializer();
             if (serializer == null)
             {
@@ -62,5 +62,4 @@ namespace Ical.Net.Serialization
             // as try/catch is much slower than other means.
             return returnValue ?? value;
         }
-    }
 }

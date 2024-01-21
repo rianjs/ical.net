@@ -3,18 +3,18 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class TimeSpanSerializer : SerializerBase
 {
-    public class TimeSpanSerializer : SerializerBase
+    public TimeSpanSerializer() { }
+
+    public TimeSpanSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (TimeSpan);
+
+    public override string SerializeToString(object obj)
     {
-        public TimeSpanSerializer() { }
-
-        public TimeSpanSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (TimeSpan);
-
-        public override string SerializeToString(object obj)
-        {
             if (!(obj is TimeSpan))
             {
                 return null;
@@ -66,12 +66,12 @@ namespace Ical.Net.Serialization.DataTypes
             return sb.ToString();
         }
 
-        internal static readonly Regex TimespanMatch =
-            new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
-                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    internal static readonly Regex TimespanMatch =
+        new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             try
@@ -124,5 +124,4 @@ namespace Ical.Net.Serialization.DataTypes
 
             return value;
         }
-    }
 }

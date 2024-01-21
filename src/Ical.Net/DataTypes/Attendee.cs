@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.Utility;
 
-namespace Ical.Net.DataTypes
+namespace Ical.Net.DataTypes;
+
+public class Attendee : EncodableDataType
 {
-    public class Attendee : EncodableDataType
+    private Uri _sentBy;
+    /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
+    public virtual Uri SentBy
     {
-        private Uri _sentBy;
-        /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
-        public virtual Uri SentBy
+        get
         {
-            get
-            {
                 if (_sentBy != null)
                 {
                     return _sentBy;
@@ -22,8 +22,8 @@ namespace Ical.Net.DataTypes
                 Uri.TryCreate(newUrl, UriKind.RelativeOrAbsolute, out _sentBy);
                 return _sentBy;
             }
-            set
-            {
+        set
+        {
                 if (value == null || value == _sentBy)
                 {
                     return;
@@ -31,22 +31,22 @@ namespace Ical.Net.DataTypes
                 _sentBy = value;
                 Parameters.Set("SENT-BY", value.OriginalString);
             }
-        }
+    }
 
-        private string _commonName;
-        /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
-        public virtual string CommonName
+    private string _commonName;
+    /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
+    public virtual string CommonName
+    {
+        get
         {
-            get
-            {
                 if (string.IsNullOrEmpty(_commonName))
                 {
                     _commonName = Parameters.Get("CN");
                 }
                 return _commonName;
             }
-            set
-            {
+        set
+        {
                 if (string.Equals(_commonName, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
@@ -54,14 +54,14 @@ namespace Ical.Net.DataTypes
                 _commonName = value;
                 Parameters.Set("CN", value);
             }
-        }
+    }
 
-        private Uri _directoryEntry;
-        /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
-        public virtual Uri DirectoryEntry
+    private Uri _directoryEntry;
+    /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
+    public virtual Uri DirectoryEntry
+    {
+        get
         {
-            get
-            {
                 if (_directoryEntry != null)
                 {
                     return _directoryEntry;
@@ -71,8 +71,8 @@ namespace Ical.Net.DataTypes
                 Uri.TryCreate(newUrl, UriKind.RelativeOrAbsolute, out _directoryEntry);
                 return _directoryEntry;
             }
-            set
-            {
+        set
+        {
                 if (value == null || value == _directoryEntry)
                 {
                     return;
@@ -80,22 +80,22 @@ namespace Ical.Net.DataTypes
                 _directoryEntry = value;
                 Parameters.Set("DIR", value.OriginalString);
             }
-        }
+    }
 
-        private string _type;
-        /// <summary> CUTYPE: the type of calendar user </summary>
-        public virtual string Type
+    private string _type;
+    /// <summary> CUTYPE: the type of calendar user </summary>
+    public virtual string Type
+    {
+        get
         {
-            get
-            {
                 if (string.IsNullOrEmpty(_type))
                 {
                     _type = Parameters.Get("CUTYPE");
                 }
                 return _type;
             }
-            set
-            {
+        set
+        {
                 if (string.Equals(_type, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
@@ -104,34 +104,34 @@ namespace Ical.Net.DataTypes
                 _type = value;
                 Parameters.Set("CUTYPE", value);
             }
-        }
+    }
 
-        private List<string> _members;
-        /// <summary> MEMBER: the groups the user belongs to </summary>
-        public virtual IList<string> Members
+    private List<string> _members;
+    /// <summary> MEMBER: the groups the user belongs to </summary>
+    public virtual IList<string> Members
+    {
+        get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
+        set
         {
-            get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
-            set
-            {
                 _members = new List<string>(value);
                 Parameters.Set("MEMBER", value);
             }
-        }
+    }
 
-        private string _role;
-        /// <summary> ROLE: the intended role the attendee will have </summary>
-        public virtual string Role
+    private string _role;
+    /// <summary> ROLE: the intended role the attendee will have </summary>
+    public virtual string Role
+    {
+        get
         {
-            get
-            {
                 if (string.IsNullOrEmpty(_role))
                 {
                     _role = Parameters.Get("ROLE");
                 }
                 return _role;
             }
-            set
-            {
+        set
+        {
                 if (string.Equals(_role, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
@@ -139,21 +139,21 @@ namespace Ical.Net.DataTypes
                 _role = value;
                 Parameters.Set("ROLE", value);
             }
-        }
+    }
 
-        private string _participationStatus;
-        public virtual string ParticipationStatus
+    private string _participationStatus;
+    public virtual string ParticipationStatus
+    {
+        get
         {
-            get
-            {
                 if (string.IsNullOrEmpty(_participationStatus))
                 {
                     _participationStatus = Parameters.Get(EventParticipationStatus.Key);
                 }
                 return _participationStatus;
             }
-            set
-            {
+        set
+        {
                 if (string.Equals(_participationStatus, value, EventParticipationStatus.Comparison))
                 {
                     return;
@@ -161,14 +161,14 @@ namespace Ical.Net.DataTypes
                 _participationStatus = value;
                 Parameters.Set(EventParticipationStatus.Key, value);
             }
-        }
+    }
 
-        private bool? _rsvp;
-        /// <summary> RSVP, to indicate whether a reply is requested </summary>
-        public virtual bool Rsvp
+    private bool? _rsvp;
+    /// <summary> RSVP, to indicate whether a reply is requested </summary>
+    public virtual bool Rsvp
+    {
+        get
         {
-            get
-            {
                 if (_rsvp != null)
                 {
                     return _rsvp.Value;
@@ -183,21 +183,21 @@ namespace Ical.Net.DataTypes
                 }
                 return false;
             }
-            set
-            {
+        set
+        {
                 _rsvp = value;
                 var val = value.ToString().ToUpperInvariant();
                 Parameters.Set("RSVP", val);
             }
-        }
+    }
 
-        private List<string> _delegatedTo;
-        /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
-        public virtual IList<string> DelegatedTo
+    private List<string> _delegatedTo;
+    /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
+    public virtual IList<string> DelegatedTo
+    {
+        get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
+        set
         {
-            get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
-            set
-            {
                 if (value == null)
                 {
                     return;
@@ -205,15 +205,15 @@ namespace Ical.Net.DataTypes
                 _delegatedTo = new List<string>(value);
                 Parameters.Set("DELEGATED-TO", value);
             }
-        }
+    }
 
-        private List<string> _delegatedFrom;
-        /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
-        public virtual IList<string> DelegatedFrom
+    private List<string> _delegatedFrom;
+    /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
+    public virtual IList<string> DelegatedFrom
+    {
+        get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
+        set
         {
-            get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
-            set
-            {
                 if (value == null)
                 {
                     return;
@@ -221,20 +221,20 @@ namespace Ical.Net.DataTypes
                 _delegatedFrom = new List<string>(value);
                 Parameters.Set("DELEGATED-FROM", value);
             }
-        }
+    }
 
-        /// <summary> Uri associated with the attendee, typically an email address </summary>
-        public virtual Uri Value { get; set; }
+    /// <summary> Uri associated with the attendee, typically an email address </summary>
+    public virtual Uri Value { get; set; }
 
-        public Attendee() {}
+    public Attendee() {}
 
-        public Attendee(Uri attendee)
-        {
+    public Attendee(Uri attendee)
+    {
             Value = attendee;
         }
 
-        public Attendee(string attendeeUri)
-        {
+    public Attendee(string attendeeUri)
+    {
             if (!Uri.IsWellFormedUriString(attendeeUri, UriKind.Absolute))
             {
                 throw new ArgumentException("attendeeUri");
@@ -242,31 +242,31 @@ namespace Ical.Net.DataTypes
             Value = new Uri(attendeeUri);
         }
 
-        //ToDo: See if this can be deleted
-        public override void CopyFrom(ICopyable obj) {}
+    //ToDo: See if this can be deleted
+    public override void CopyFrom(ICopyable obj) {}
 
-        protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
-            && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
-            && Equals(DirectoryEntry, other.DirectoryEntry)
-            && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(Role, other.Role)
-            && string.Equals(ParticipationStatus, other.ParticipationStatus, StringComparison.OrdinalIgnoreCase)
-            && Rsvp == other.Rsvp
-            && Equals(Value, other.Value)
-            && Members.SequenceEqual(other.Members)
-            && DelegatedTo.SequenceEqual(other.DelegatedTo)
-            && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
+    protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
+                                             && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
+                                             && Equals(DirectoryEntry, other.DirectoryEntry)
+                                             && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
+                                             && string.Equals(Role, other.Role)
+                                             && string.Equals(ParticipationStatus, other.ParticipationStatus, StringComparison.OrdinalIgnoreCase)
+                                             && Rsvp == other.Rsvp
+                                             && Equals(Value, other.Value)
+                                             && Members.SequenceEqual(other.Members)
+                                             && DelegatedTo.SequenceEqual(other.DelegatedTo)
+                                             && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
 
-        public override bool Equals(object obj)
-        {
+    public override bool Equals(object obj)
+    {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             return Equals((Attendee) obj);
         }
 
-        public override int GetHashCode()
-        {
+    public override int GetHashCode()
+    {
             unchecked
             {
                 var hashCode = SentBy?.GetHashCode() ?? 0;
@@ -283,5 +283,4 @@ namespace Ical.Net.DataTypes
                 return hashCode;
             }
         }
-    }
 }

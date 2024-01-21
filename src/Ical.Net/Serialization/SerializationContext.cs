@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Ical.Net.Serialization
-{
-    public class SerializationContext
-    {
-        private static SerializationContext _default;
+namespace Ical.Net.Serialization;
 
-        /// <summary>
-        /// Gets the Singleton instance of the SerializationContext class.
-        /// </summary>
-        public static SerializationContext Default
+public class SerializationContext
+{
+    private static SerializationContext _default;
+
+    /// <summary>
+    /// Gets the Singleton instance of the SerializationContext class.
+    /// </summary>
+    public static SerializationContext Default
+    {
+        get
         {
-            get
-            {
                 if (_default == null)
                 {
                     _default = new SerializationContext();
@@ -31,13 +31,13 @@ namespace Ical.Net.Serialization
                 };
                 return ctx;
             }
-        }
+    }
 
-        private readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
-        private ServiceProvider _mServiceProvider = new ServiceProvider();
+    private readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
+    private ServiceProvider _mServiceProvider = new ServiceProvider();
 
-        public SerializationContext()
-        {
+    public SerializationContext()
+    {
             // Add some services by default
             SetService(new SerializerFactory());
             SetService(new CalendarComponentFactory());
@@ -46,16 +46,16 @@ namespace Ical.Net.Serialization
             SetService(new EncodingProvider(this));
         }
 
-        public virtual void Push(object item)
-        {
+    public virtual void Push(object item)
+    {
             if (item != null)
             {
                 _mStack.Push(new WeakReference(item));
             }
         }
 
-        public virtual object Pop()
-        {
+    public virtual object Pop()
+    {
             if (_mStack.Count > 0)
             {
                 var r = _mStack.Pop();
@@ -67,8 +67,8 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public virtual object Peek()
-        {
+    public virtual object Peek()
+    {
             if (_mStack.Count > 0)
             {
                 var r = _mStack.Peek();
@@ -80,32 +80,31 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public virtual object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
+    public virtual object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name) => _mServiceProvider.GetService(name);
+    public virtual object GetService(string name) => _mServiceProvider.GetService(name);
 
-        public virtual T GetService<T>() => _mServiceProvider.GetService<T>();
+    public virtual T GetService<T>() => _mServiceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
+    public virtual T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
 
-        public virtual void SetService(string name, object obj)
-        {
+    public virtual void SetService(string name, object obj)
+    {
             _mServiceProvider.SetService(name, obj);
         }
 
-        public virtual void SetService(object obj)
-        {
+    public virtual void SetService(object obj)
+    {
             _mServiceProvider.SetService(obj);
         }
 
-        public virtual void RemoveService(Type type)
-        {
+    public virtual void RemoveService(Type type)
+    {
             _mServiceProvider.RemoveService(type);
         }
 
-        public virtual void RemoveService(string name)
-        {
+    public virtual void RemoveService(string name)
+    {
             _mServiceProvider.RemoveService(name);
         }
-    }
 }

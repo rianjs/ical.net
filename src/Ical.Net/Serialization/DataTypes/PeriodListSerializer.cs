@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class PeriodListSerializer : EncodableDataTypeSerializer
 {
-    public class PeriodListSerializer : EncodableDataTypeSerializer
+    public PeriodListSerializer() { }
+
+    public PeriodListSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof (PeriodList);
+
+    public override string SerializeToString(object obj)
     {
-        public PeriodListSerializer() { }
-
-        public PeriodListSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof (PeriodList);
-
-        public override string SerializeToString(object obj)
-        {
             var periodList = obj as PeriodList;
             var factory = GetService<ISerializerFactory>();
             if (periodList == null || factory == null)
@@ -46,8 +46,8 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(periodList, string.Join(",", parts));
         }
 
-        public override object Deserialize(TextReader tr)
-        {
+    public override object Deserialize(TextReader tr)
+    {
             var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
@@ -87,5 +87,4 @@ namespace Ical.Net.Serialization.DataTypes
             }
             return rdt;
         }
-    }
 }

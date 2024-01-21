@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Text;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+internal class EncodingProvider : IEncodingProvider
 {
-    internal class EncodingProvider : IEncodingProvider
+    public delegate string EncoderDelegate(byte[] data);
+
+    public delegate byte[] DecoderDelegate(string value);
+
+    private readonly SerializationContext _mSerializationContext;
+
+    public EncodingProvider(SerializationContext ctx)
     {
-        public delegate string EncoderDelegate(byte[] data);
-
-        public delegate byte[] DecoderDelegate(string value);
-
-        private readonly SerializationContext _mSerializationContext;
-
-        public EncodingProvider(SerializationContext ctx)
-        {
             _mSerializationContext = ctx;
         }
 
-        protected byte[] Decode7Bit(string value)
-        {
+    protected byte[] Decode7Bit(string value)
+    {
             try
             {
                 var utf7 = new UTF7Encoding();
@@ -29,8 +29,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected byte[] Decode8Bit(string value)
-        {
+    protected byte[] Decode8Bit(string value)
+    {
             try
             {
                 var utf8 = new UTF8Encoding();
@@ -42,8 +42,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected byte[] DecodeBase64(string value)
-        {
+    protected byte[] DecodeBase64(string value)
+    {
             try
             {
                 return Convert.FromBase64String(value);
@@ -54,8 +54,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected virtual DecoderDelegate GetDecoderFor(string encoding)
-        {
+    protected virtual DecoderDelegate GetDecoderFor(string encoding)
+    {
             if (encoding == null)
             {
                 return null;
@@ -74,8 +74,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected string Encode7Bit(byte[] data)
-        {
+    protected string Encode7Bit(byte[] data)
+    {
             try
             {
                 var utf7 = new UTF7Encoding();
@@ -87,8 +87,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected string Encode8Bit(byte[] data)
-        {
+    protected string Encode8Bit(byte[] data)
+    {
             try
             {
                 var utf8 = new UTF8Encoding();
@@ -100,8 +100,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected string EncodeBase64(byte[] data)
-        {
+    protected string EncodeBase64(byte[] data)
+    {
             try
             {
                 return Convert.ToBase64String(data);
@@ -112,8 +112,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        protected virtual EncoderDelegate GetEncoderFor(string encoding)
-        {
+    protected virtual EncoderDelegate GetEncoderFor(string encoding)
+    {
             if (encoding == null)
             {
                 return null;
@@ -132,8 +132,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        public string Encode(string encoding, byte[] data)
-        {
+    public string Encode(string encoding, byte[] data)
+    {
             if (encoding == null || data == null)
             {
                 return null;
@@ -145,8 +145,8 @@ namespace Ical.Net.Serialization
             return encoder?.Invoke(data);
         }
 
-        public string DecodeString(string encoding, string value)
-        {
+    public string DecodeString(string encoding, string value)
+    {
             if (encoding == null || value == null)
             {
                 return null;
@@ -163,8 +163,8 @@ namespace Ical.Net.Serialization
             return encodingStack.Current.GetString(data);
         }
 
-        public byte[] DecodeData(string encoding, string value)
-        {
+    public byte[] DecodeData(string encoding, string value)
+    {
             if (encoding == null || value == null)
             {
                 return null;
@@ -173,5 +173,4 @@ namespace Ical.Net.Serialization
             var decoder = GetDecoderFor(encoding);
             return decoder?.Invoke(value);
         }
-    }
 }

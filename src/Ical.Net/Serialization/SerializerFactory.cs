@@ -4,28 +4,28 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 
-namespace Ical.Net.Serialization
-{
-    public class SerializerFactory : ISerializerFactory
-    {
-        private readonly ISerializerFactory _mDataTypeSerializerFactory;
+namespace Ical.Net.Serialization;
 
-        public SerializerFactory()
-        {
+public class SerializerFactory : ISerializerFactory
+{
+    private readonly ISerializerFactory _mDataTypeSerializerFactory;
+
+    public SerializerFactory()
+    {
             _mDataTypeSerializerFactory = new DataTypeSerializerFactory();
         }
 
-        /// <summary>
-        /// Returns a serializer that can be used to serialize and object
-        /// of type <paramref name="objectType"/>.
-        /// <note>
-        ///     TODO: Add support for caching.
-        /// </note>
-        /// </summary>
-        /// <param name="objectType">The type of object to be serialized.</param>
-        /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
-        {
+    /// <summary>
+    /// Returns a serializer that can be used to serialize and object
+    /// of type <paramref name="objectType"/>.
+    /// <note>
+    ///     TODO: Add support for caching.
+    /// </note>
+    /// </summary>
+    /// <param name="objectType">The type of object to be serialized.</param>
+    /// <param name="ctx">The serialization context.</param>
+    public virtual ISerializer Build(Type objectType, SerializationContext ctx)
+    {
             if (objectType == null)
             {
                 return null;
@@ -83,5 +83,4 @@ namespace Ical.Net.Serialization
 
             return s;
         }
-    }
 }
