@@ -89,11 +89,6 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             }
 
             // Only return an object if it has been deserialized correctly.
-            if (p.StartTime != null && p.Duration != null)
-            {
-                return p;
-            }
-
-            return null;
-        }
+            return p.StartTime != null ? p : null;
+    }
 }

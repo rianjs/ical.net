@@ -41,20 +41,20 @@ public class UtcOffset : EncodableDataType
 
     public override bool Equals(object obj)
     {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((UtcOffset) obj);
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
         }
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+        if (obj.GetType() != GetType())
+        {
+            return false;
+        }
+        return Equals((UtcOffset) obj);
+    }
 
     public override int GetHashCode() => Offset.GetHashCode();
 

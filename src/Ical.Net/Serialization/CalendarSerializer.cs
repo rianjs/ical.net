@@ -9,8 +9,8 @@ public class CalendarSerializer : ComponentSerializer
 
     public CalendarSerializer(Calendar cal)
     {
-            _calendar = cal;
-        }
+        _calendar = cal;
+    }
 
     public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
@@ -20,17 +20,17 @@ public class CalendarSerializer : ComponentSerializer
 
     public override string SerializeToString(object obj)
     {
-            if (obj is Calendar)
-            {
-                // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-                var calendar = (Calendar) obj;
-                calendar.Version = LibraryMetadata.Version;
-                calendar.ProductId = LibraryMetadata.ProdId;
+        if (obj is Calendar)
+        {
+            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
+            var calendar = (Calendar) obj;
+            calendar.Version = LibraryMetadata.Version;
+            calendar.ProductId = LibraryMetadata.ProdId;
 
-                return base.SerializeToString(calendar);
-            }
+            return base.SerializeToString(calendar);
+        }
 
-            return base.SerializeToString(obj);
+        return base.SerializeToString(obj);
         }
 
     public override object Deserialize(TextReader tr) => null;
@@ -39,25 +39,26 @@ public class CalendarSerializer : ComponentSerializer
     {
         public int Compare(ICalendarProperty x, ICalendarProperty y)
         {
-                if (x == y)
-                {
-                    return 0;
-                }
-                if (x == null)
-                {
-                    return -1;
-                }
-                if (y == null)
-                {
-                    return 1;
-                }
-                // Alphabetize all properties except VERSION, which should appear first.          if (string.Equals("VERSION", x.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return -1;
-                }
-                return string.Equals("VERSION", y.Name, StringComparison.OrdinalIgnoreCase)
-                    ? 1
-                    : string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+            if (x == y)
+            {
+                return 0;
             }
+            if (x == null)
+            {
+                return -1;
+            }
+            if (y == null)
+            {
+                return 1;
+            }
+            // Alphabetize all properties except VERSION, which should appear first.
+            if (string.Equals("VERSION", x.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return -1;
+            }
+            return string.Equals("VERSION", y.Name, StringComparison.OrdinalIgnoreCase)
+                ? 1
+                : string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

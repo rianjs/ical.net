@@ -114,7 +114,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
     /// <summary>
-    /// A collection of <see cref="Components.Event"/> components in the iCalendar.
+    /// A collection of <see cref="CalendarEvent"/> components in the iCalendar.
     /// </summary>
     public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
 

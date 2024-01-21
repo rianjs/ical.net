@@ -1,4 +1,6 @@
-﻿namespace Ical.Net;
+﻿using Ical.Net.CalendarComponents;
+
+namespace Ical.Net;
 
 public static class AlarmAction
 {
@@ -117,7 +119,7 @@ public class SerializationConstants
 }
 
 /// <summary>
-/// Status codes available to an <see cref="Components.Event"/> item
+/// Status codes available to an <see cref="CalendarEvent"/> item
 /// </summary>
 public static class EventStatus
 {

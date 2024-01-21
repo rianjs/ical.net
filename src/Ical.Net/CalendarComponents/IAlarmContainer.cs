@@ -10,7 +10,7 @@ public interface IAlarmContainer
     ICalendarObjectList<Alarm> Alarms { get; }
 
     ///  <summary>
-    ///  Polls <see cref="Alarm"/>s for occurrences within the <see cref="Evaluate"/>d
+    ///  Polls <see cref="Alarm"/>s for occurrences within the Evaluated
     ///  time frame of this <see cref="RecurringComponent"/>.  For each evaluated
     ///  occurrence if this component, each <see cref="Alarm"/> is polled for its
     ///  corresponding alarm occurrences.

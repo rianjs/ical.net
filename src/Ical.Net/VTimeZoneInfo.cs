@@ -1,60 +1,62 @@
-﻿using System.Runtime.Serialization;
+﻿#nullable enable
+using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 
 namespace Ical.Net;
 
-public class VTimeZoneInfo : CalendarComponent, IRecurrable
+public class VTimeZoneInfo : CalendarComponent, IRecurrable, IEquatable<VTimeZoneInfo>
 {
-    TimeZoneInfoEvaluator _evaluator;
+    private TimeZoneInfoEvaluator _evaluator;
 
     public VTimeZoneInfo()
     {
+        _evaluator = new TimeZoneInfoEvaluator(this);
+        
         // FIXME: how do we ensure SEQUENCE doesn't get serialized?
         //base.Sequence = null;
         // iCalTimeZoneInfo does not allow sequence numbers
         // Perhaps we should have a custom serializer that fixes this?
 
-        Initialize();
+        SetService(_evaluator);
     }
+    
     public VTimeZoneInfo(string name) : this()
     {
+        _evaluator = new TimeZoneInfoEvaluator(this);
         Name = name;
+        SetService(_evaluator);
     }
-
-    void Initialize()
+    
+    protected override void OnDeserializing(StreamingContext context)
     {
+        base.OnDeserializing(context);
         _evaluator = new TimeZoneInfoEvaluator(this);
         SetService(_evaluator);
     }
 
-    protected override void OnDeserializing(StreamingContext context)
-    {
-        base.OnDeserializing(context);
+    public override bool Equals(object? obj)
+        => obj is VTimeZoneInfo tzi && Equals(tzi);
 
-        Initialize();
+    public bool Equals(VTimeZoneInfo? other)
+    {
+        return string.Equals(TimeZoneName, other?.TimeZoneName, StringComparison.Ordinal)
+            && Equals(OffsetFrom, other?.OffsetFrom)
+            && Equals(OffsetTo, other?.OffsetTo);
     }
 
-    public override bool Equals(object obj)
+    public override int GetHashCode()
     {
-        var tzi = obj as VTimeZoneInfo;
-        if (tzi != null)
-        {
-            return Equals(TimeZoneName, tzi.TimeZoneName) &&
-                   Equals(OffsetFrom, tzi.OffsetFrom) &&
-                   Equals(OffsetTo, tzi.OffsetTo);
-        }
-        return base.Equals(obj);
+        var hashCode = new HashCode();
+        hashCode.Add(TimeZoneName, StringComparer.Ordinal);
+        hashCode.Add(OffsetFrom);
+        hashCode.Add(OffsetTo);
+        return hashCode.ToHashCode();
     }
 
-    public virtual string TzId
-    {
-        get =>
-            !(Parent is VTimeZone tz)
-                ? null
-                : tz.TzId;
-    }
+    public virtual string? TzId => Parent is VTimeZone tz ? tz.TzId : null;
 
     /// <summary>
     /// Returns the name of the current Time Zone.
@@ -68,15 +70,19 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     ///     </list>
     /// </example>
     /// </summary>
-    public virtual string TimeZoneName
+    public virtual string? TimeZoneName
     {
-        get => TimeZoneNames.Count > 0
-            ? TimeZoneNames[0]
-            : null;
+        get => TimeZoneNames is null || TimeZoneNames.Count == 0
+            ? null
+            : TimeZoneNames[0];
         set
         {
+            TimeZoneNames ??= new List<string>(1);
             TimeZoneNames.Clear();
-            TimeZoneNames.Add(value);
+            if (value is not null)
+            {
+                TimeZoneNames.Add(value);    
+            }
         }
     }
 
@@ -104,7 +110,7 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => OffsetTo = value;
     }
 
-    public virtual IList<string> TimeZoneNames
+    public virtual IList<string>? TimeZoneNames
     {
         get => Properties.GetMany<string>("TZNAME");
         set => Properties.Set("TZNAME", value);
