@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ical.Net.Collections;
+﻿namespace Ical.Net.Collections;
 
 public interface IMultiLinkedList<TType> :
     IList<TType>

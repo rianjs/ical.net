@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ical.Net.DataTypes;
+﻿namespace Ical.Net.DataTypes;
 
 public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable, ICalendarDataType
 {

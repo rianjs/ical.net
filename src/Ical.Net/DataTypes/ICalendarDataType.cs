@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ical.Net.DataTypes;
+﻿namespace Ical.Net.DataTypes;
 
 public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
 {

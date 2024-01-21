@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ical.Net.Collections.Interfaces;
+﻿namespace Ical.Net.Collections.Interfaces;
 
 public interface IValueObject<T>
 {

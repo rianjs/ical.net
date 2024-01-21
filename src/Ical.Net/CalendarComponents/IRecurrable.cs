@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 
 namespace Ical.Net.CalendarComponents;
 

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Ical.Net.Collections;
+﻿using Ical.Net.Collections;
 
 namespace Ical.Net;
 

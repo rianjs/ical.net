@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Ical.Net.Serialization;
+﻿namespace Ical.Net.Serialization;
 
 public class SerializationContext
 {

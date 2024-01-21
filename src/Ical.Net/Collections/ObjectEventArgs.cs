@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ical.Net.Collections;
+﻿namespace Ical.Net.Collections;
 
 public class ObjectEventArgs<T, TU> :
     EventArgs

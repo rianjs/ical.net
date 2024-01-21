@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ical.Net;
+﻿namespace Ical.Net;
 
 public static class AlarmAction
 {

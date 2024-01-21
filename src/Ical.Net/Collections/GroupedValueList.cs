@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Ical.Net.Collections.Interfaces;
+﻿using Ical.Net.Collections.Interfaces;
 using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Collections;

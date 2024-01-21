@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.Serialization;
 

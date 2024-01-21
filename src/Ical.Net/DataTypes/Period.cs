@@ -1,4 +1,3 @@
-using System;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes;

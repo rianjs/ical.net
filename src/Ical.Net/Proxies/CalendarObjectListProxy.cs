@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Ical.Net.Collections;
+﻿using Ical.Net.Collections;
 using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Proxies;

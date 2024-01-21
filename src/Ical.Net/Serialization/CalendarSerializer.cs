@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Ical.Net.Serialization;
+﻿namespace Ical.Net.Serialization;
 
 public class CalendarSerializer : ComponentSerializer
 {
