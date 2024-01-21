@@ -53,34 +53,34 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     public override bool Equals(object obj)
     {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CalendarObject) obj);
-        }
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((CalendarObject) obj);
+    }
 
     public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
     public override void CopyFrom(ICopyable c)
     {
-            var obj = c as ICalendarObject;
-            if (obj == null)
-            {
-                return;
-            }
-
-            // Copy the name and basic information
-            Name = obj.Name;
-            Parent = obj.Parent;
-            Line = obj.Line;
-            Column = obj.Column;
-
-            // Add each child
-            Children.Clear();
-            foreach (var child in obj.Children)
-            {
-                this.AddChild(child);
-            }
+        var obj = c as ICalendarObject;
+        if (obj == null)
+        {
+            return;
         }
+
+        // Copy the name and basic information
+        Name = obj.Name;
+        Parent = obj.Parent;
+        Line = obj.Line;
+        Column = obj.Column;
+
+        // Add each child
+        Children.Clear();
+        foreach (var child in obj.Children)
+        {
+            this.AddChild(child);
+        }
+    }
 
     /// <summary>
     /// Returns the parent iCalObject that owns this one.
@@ -104,14 +104,14 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
         get
         {
-                ICalendarObject obj = this;
-                while (!(obj is Calendar) && obj.Parent != null)
-                {
-                    obj = obj.Parent;
-                }
-
-                return obj as Calendar;
+            ICalendarObject obj = this;
+            while (obj is not Net.Calendar && obj.Parent is not null)
+            {
+                obj = obj.Parent;
             }
+
+            return obj as Calendar;
+        }
         protected set { }
     }
 
