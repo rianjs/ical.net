@@ -249,7 +249,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(serialized.Contains("Hello"));
 
             e.Resources.Clear();
-            e.Resources.AddRange(origContents);
+            CollectionHelpers.AddRange(e.Resources, origContents);
             CollectionAssert.AreEquivalent(e.Resources, origContents);
             serialized = SerializeEvent(e);
             Assert.IsTrue(serialized.Contains("Foo"));
