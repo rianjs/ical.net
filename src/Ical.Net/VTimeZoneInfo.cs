@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;

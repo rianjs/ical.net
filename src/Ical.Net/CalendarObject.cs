@@ -13,29 +13,29 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     internal CalendarObject()
     {
-            Initialize();
-        }
+        Initialize();
+    }
 
     public CalendarObject(string name) : this()
     {
-            Name = name;
-        }
+        Name = name;
+    }
 
     public CalendarObject(int line, int col) : this()
     {
-            Line = line;
-            Column = col;
-        }
+        Line = line;
+        Column = col;
+    }
 
     private void Initialize()
     {
-            //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
-            //ToDo: its constructor parameter is ignored
-            _children = new CalendarObjectList(this);
-            _serviceProvider = new ServiceProvider();
+        //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
+        //ToDo: its constructor parameter is ignored
+        _children = new CalendarObjectList(this);
+        _serviceProvider = new ServiceProvider();
 
-            _children.ItemAdded += Children_ItemAdded;
-        }
+        _children.ItemAdded += Children_ItemAdded;
+    }
 
     [OnDeserializing]
     internal void DeserializingInternal(StreamingContext context) => OnDeserializing(context);
@@ -47,9 +47,11 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     protected virtual void OnDeserialized(StreamingContext context) {}
 
-    private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
+    private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        => e.First.Parent = this;
 
-    protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+    protected bool Equals(CalendarObject other)
+        => string.Equals(Name, other.Name, StringComparison.Ordinal);
 
     public override bool Equals(object obj)
     {
@@ -58,12 +60,16 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
         return obj.GetType() == GetType() && Equals((CalendarObject) obj);
     }
 
-    public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+        hashCode.Add(Name, StringComparer.Ordinal);
+        return hashCode.ToHashCode();
+    }
 
     public override void CopyFrom(ICopyable c)
     {
-        var obj = c as ICalendarObject;
-        if (obj == null)
+        if (c is not ICalendarObject obj)
         {
             return;
         }

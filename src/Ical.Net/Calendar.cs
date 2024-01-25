@@ -51,26 +51,26 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     public Calendar()
     {
-            Name = Components.Calendar;
-            Initialize();
-        }
+        Name = Components.Calendar;
+        Initialize();
+    }
 
     private void Initialize()
     {
-            _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
-            _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);
-            _mTodos = new UniqueComponentListProxy<Todo>(Children);
-            _mJournals = new CalendarObjectListProxy<Journal>(Children);
-            _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
-            _mTimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
-        }
+        _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
+        _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);
+        _mTodos = new UniqueComponentListProxy<Todo>(Children);
+        _mJournals = new CalendarObjectListProxy<Journal>(Children);
+        _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
+        _mTimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
+    }
 
     protected override void OnDeserializing(StreamingContext context)
     {
-            base.OnDeserializing(context);
+        base.OnDeserializing(context);
 
-            Initialize();
-        }
+        Initialize();
+    }
 
     protected bool Equals(Calendar other)
         => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
@@ -83,60 +83,67 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
     public override bool Equals(object obj)
     {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            return obj.GetType() == GetType() && Equals((Calendar)obj);
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
         }
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+        return obj.GetType() == GetType() && Equals((Calendar)obj);
+    }
 
     public override int GetHashCode()
     {
-            unchecked
-            {
-                var hashCode = Name?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Journals);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(FreeBusy);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(TimeZones);
-                return hashCode;
-            }
+        unchecked
+        {
+            var hashCode = Name?.GetHashCode() ?? 0;
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Journals);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(FreeBusy);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(TimeZones);
+            return hashCode;
         }
+    }
 
-    public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
+    public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents
+        => _mUniqueComponents;
 
-    public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
+    public virtual IEnumerable<IRecurrable> RecurringItems
+        => Children.OfType<IRecurrable>();
 
     /// <summary>
     /// A collection of <see cref="CalendarEvent"/> components in the iCalendar.
     /// </summary>
-    public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
+    public virtual IUniqueComponentList<CalendarEvent> Events
+        => _mEvents;
 
     /// <summary>
     /// A collection of <see cref="CalendarComponents.FreeBusy"/> components in the iCalendar.
     /// </summary>
-    public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
+    public virtual IUniqueComponentList<FreeBusy> FreeBusy
+        => _mFreeBusy;
 
     /// <summary>
     /// A collection of <see cref="Journal"/> components in the iCalendar.
     /// </summary>
-    public virtual ICalendarObjectList<Journal> Journals => _mJournals;
+    public virtual ICalendarObjectList<Journal> Journals
+        => _mJournals;
 
     /// <summary>
     /// A collection of VTimeZone components in the iCalendar.
     /// </summary>
-    public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
+    public virtual ICalendarObjectList<VTimeZone> TimeZones
+        => _mTimeZones;
 
     /// <summary>
     /// A collection of <see cref="Todo"/> components in the iCalendar.
     /// </summary>
-    public virtual IUniqueComponentList<Todo> Todos => _mTodos;
+    public virtual IUniqueComponentList<Todo> Todos
+        => _mTodos;
 
     public virtual string Version
     {
@@ -182,9 +189,9 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>The time zone added to the calendar.</returns>
     public VTimeZone AddTimeZone(VTimeZone tz)
     {
-            this.AddChild(tz);
-            return tz;
-        }
+        this.AddChild(tz);
+        return tz;
+    }
 
     /// <summary>
     /// Evaluates component recurrences for the given range of time.
@@ -198,9 +205,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="toDate">The end date/time of the range to test.</param>
     [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
     public void Evaluate(IDateTime fromDate, IDateTime toDate)
-    {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
+        => throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
 
     /// <summary>
     /// Evaluates component recurrences for the given range of time, for
@@ -211,20 +216,18 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="toDate">The end date/time of the range to test.</param>
     [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
     public void Evaluate<T>(IDateTime fromDate, IDateTime toDate)
-    {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
+        => throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
 
     /// <summary>
     /// Clears recurrence evaluations for recurring components.        
     /// </summary>        
     public void ClearEvaluation()
     {
-            foreach (var recurrable in RecurringItems)
-            {
-                recurrable.ClearEvaluation();
-            }
+        foreach (var recurrable in RecurringItems)
+        {
+            recurrable.ClearEvaluation();
         }
+    }
 
     /// <summary>
     /// Returns a list of occurrences of each recurring component
@@ -278,21 +281,21 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="endTime">The ending date range</param>
     public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
     {
-            var occurrences = new HashSet<Occurrence>(RecurringItems
-                .OfType<T>()
-                .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+        var occurrences = new HashSet<Occurrence>(RecurringItems
+            .OfType<T>()
+            .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
 
-            var removeOccurrencesQuery = occurrences
-                .Where(o => o.Source is UniqueComponent)
-                .GroupBy(o => ((UniqueComponent)o.Source).Uid)
-                .SelectMany(group => group
-                    .Where(o => o.Source.RecurrenceId != null)
-                    .SelectMany(occurrence => group.
-                        Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
+        var removeOccurrencesQuery = occurrences
+            .Where(o => o.Source is UniqueComponent)
+            .GroupBy(o => ((UniqueComponent)o.Source).Uid)
+            .SelectMany(group => group
+                .Where(o => o.Source.RecurrenceId != null)
+                .SelectMany(occurrence => group.
+                    Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
 
-            occurrences.ExceptWith(removeOccurrencesQuery);
-            return occurrences;
-        }
+        occurrences.ExceptWith(removeOccurrencesQuery);
+        return occurrences;
+    }
 
     public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
         => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
@@ -316,58 +319,58 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>An object of the type specified</returns>
     public T Create<T>() where T : ICalendarComponent
     {
-            var obj = Activator.CreateInstance(typeof (T)) as ICalendarObject;
-            if (obj is T)
-            {
-                this.AddChild(obj);
-                return (T) obj;
-            }
-            return default(T);
+        var obj = Activator.CreateInstance(typeof (T)) as ICalendarObject;
+        if (obj is T)
+        {
+            this.AddChild(obj);
+            return (T) obj;
         }
+        return default(T);
+    }
 
     public void Dispose()
     {
-            Children.Clear();
-        }
+        Children.Clear();
+    }
 
     public virtual void MergeWith(IMergeable obj)
     {
-            var c = obj as Calendar;
-            if (c == null)
-            {
-                return;
-            }
+        var c = obj as Calendar;
+        if (c == null)
+        {
+            return;
+        }
 
-            if (Name == null)
-            {
-                Name = c.Name;
-            }
+        if (Name == null)
+        {
+            Name = c.Name;
+        }
 
-            Method = c.Method;
-            Version = c.Version;
-            ProductId = c.ProductId;
-            Scale = c.Scale;
+        Method = c.Method;
+        Version = c.Version;
+        ProductId = c.ProductId;
+        Scale = c.Scale;
 
-            foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
-            {
-                Properties.Add(p);
-            }
+        foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
+        {
+            Properties.Add(p);
+        }
 
-            foreach (var child in c.Children)
+        foreach (var child in c.Children)
+        {
+            if (child is IUniqueComponent)
             {
-                if (child is IUniqueComponent)
-                {
-                    if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
-                    {
-                        this.AddChild(child);
-                    }
-                }
-                else
+                if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
                 {
                     this.AddChild(child);
                 }
             }
+            else
+            {
+                this.AddChild(child);
+            }
         }
+    }
 
     public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
 
@@ -386,36 +389,36 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>The time zone added to the calendar.</returns>
     public VTimeZone AddTimeZone(TimeZoneInfo tzi)
     {
-            var tz = VTimeZone.FromSystemTimeZone(tzi);
-            this.AddChild(tz);
-            return tz;
-        }
+        var tz = VTimeZone.FromSystemTimeZone(tzi);
+        this.AddChild(tz);
+        return tz;
+    }
 
     public VTimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
-            var tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
-            this.AddChild(tz);
-            return tz;
-        }
+        var tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+        this.AddChild(tz);
+        return tz;
+    }
 
     public VTimeZone AddTimeZone(string tzId)
     {
-            var tz = VTimeZone.FromDateTimeZone(tzId);
-            this.AddChild(tz);
-            return tz;
-        }
+        var tz = VTimeZone.FromDateTimeZone(tzId);
+        this.AddChild(tz);
+        return tz;
+    }
 
     public VTimeZone AddTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
-            var tz = VTimeZone.FromDateTimeZone(tzId, earliestDateTimeToSupport, includeHistoricalData);
-            this.AddChild(tz);
-            return tz;
-        }
+        var tz = VTimeZone.FromDateTimeZone(tzId, earliestDateTimeToSupport, includeHistoricalData);
+        this.AddChild(tz);
+        return tz;
+    }
 
     public VTimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
-            var tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
-            this.AddChild(tz);
-            return tz;
-        }
+        var tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+        this.AddChild(tz);
+        return tz;
+    }
 }
