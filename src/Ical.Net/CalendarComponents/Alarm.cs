@@ -1,4 +1,5 @@
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -6,9 +7,8 @@ namespace Ical.Net.CalendarComponents;
 /// A class that represents an RFC 2445 VALARM component.
 /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
 /// </summary>    
-public class Alarm : CalendarComponent
+public class Alarm : CalendarComponent, IEquatable<Alarm>
 {
-    //ToDo: Implement IEquatable
     public virtual string Action
     {
         get => Properties.Get<string>(AlarmAction.Key);
@@ -175,4 +175,21 @@ public class Alarm : CalendarComponent
             }
         }
     }
+
+    public bool Equals(Alarm other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other)
+            || CollectionHelpers.Equals(Occurrences, other.Occurrences);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((Alarm)obj);
+    }
+
+    public override int GetHashCode()
+        => CollectionHelpers.GetHashCode(Occurrences);
 }

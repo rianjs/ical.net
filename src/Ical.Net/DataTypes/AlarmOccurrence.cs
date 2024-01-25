@@ -26,19 +26,20 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
 
     public AlarmOccurrence(AlarmOccurrence ao)
     {
-            Period = ao.Period;
-            Component = ao.Component;
-            Alarm = ao.Alarm;
-        }
+        Period = ao.Period;
+        Component = ao.Component;
+        Alarm = ao.Alarm;
+    }
 
     public AlarmOccurrence(Alarm a, IDateTime dt, IRecurringComponent rc)
     {
-            Alarm = a;
-            Period = new Period(dt);
-            Component = rc;
-        }
+        Alarm = a;
+        Period = new Period(dt);
+        Component = rc;
+    }
 
-    public int CompareTo(AlarmOccurrence other) => Period.CompareTo(other.Period);
+    public int CompareTo(AlarmOccurrence other)
+        => Period.CompareTo(other.Period);
 
     protected bool Equals(AlarmOccurrence other)
         => Equals(Period, other.Period) 
@@ -47,20 +48,11 @@ public class AlarmOccurrence : IComparable<AlarmOccurrence>
 
     public override bool Equals(object obj)
     {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((AlarmOccurrence)obj);
-        }
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((AlarmOccurrence)obj);
+    }
 
     public override int GetHashCode()
-    {
-            // ToDo: Alarm doesn't implement Equals or GetHashCode()
-            unchecked
-            {
-                var hashCode = Period?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (Component?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (Alarm?.GetHashCode() ?? 0);
-                return hashCode;
-            }
-        }
+        => HashCode.Combine(Period, Component, Alarm).GetHashCode();
 }

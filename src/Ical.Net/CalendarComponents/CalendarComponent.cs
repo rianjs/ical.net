@@ -17,58 +17,57 @@ public class CalendarComponent : CalendarObject, ICalendarComponent
 
     public CalendarComponent() : base()
     {
-            Initialize();
-        }
+        Initialize();
+    }
 
     public CalendarComponent(string name) : base(name)
     {
-            Initialize();
-        }
+        Initialize();
+    }
 
     private void Initialize()
     {
-            Properties = new CalendarPropertyList(this);
-        }
+        Properties = new CalendarPropertyList(this);
+    }
 
     protected override void OnDeserializing(StreamingContext context)
     {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
+        base.OnDeserializing(context);
+        Initialize();
+    }
 
     public override void CopyFrom(ICopyable obj)
     {
-            base.CopyFrom(obj);
+        base.CopyFrom(obj);
 
-            var c = obj as ICalendarComponent;
-            if (c == null)
-            {
-                return;
-            }
-
-            Properties.Clear();
-            foreach (var p in c.Properties)
-            {
-                Properties.Add(p);
-            }
+        var c = obj as ICalendarComponent;
+        if (c == null)
+        {
+            return;
         }
+
+        Properties.Clear();
+        foreach (var p in c.Properties)
+        {
+            Properties.Add(p);
+        }
+    }
 
     /// <summary>
     /// Adds a property to this component.
     /// </summary>
     public virtual void AddProperty(string name, string value)
     {
-            var p = new CalendarProperty(name, value);
-            AddProperty(p);
-        }
+        var p = new CalendarProperty(name, value);
+        AddProperty(p);
+    }
 
     /// <summary>
     /// Adds a property to this component.
     /// </summary>
     public virtual void AddProperty(ICalendarProperty p)
     {
-            p.Parent = this;
-            Properties.Set(p.Name, p.Value);
-        }
+        p.Parent = this;
+        Properties.Set(p.Name, p.Value);
+    }
 }
