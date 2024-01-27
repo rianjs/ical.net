@@ -30,8 +30,8 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public CalDateTime(DateTime value) : this(value, null) { }
 
     /// <summary>
-    /// Specifying a `tzId` value will override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
-    /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Local`. If no time zone is specified, the `DateTimeKind`
+    /// Specifying a `tzId` value may override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
+    /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Unspecified`. If no time zone is specified, the `DateTimeKind`
     /// property will be left untouched.
     /// </summary>
     public CalDateTime(DateTime value, string tzId)
@@ -73,20 +73,31 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     private void Initialize(DateTime value, string tzId, Calendar cal)
     {
-        if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+        // if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+        // {
+        //     // Definitely local
+        //     value = DateTime.SpecifyKind(value, DateTimeKind.Local);
+        //     TzId = tzId;
+        // }
+        // else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || value.Kind == DateTimeKind.Utc)
+        // {
+        //     // Probably UTC
+        //     value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        //     TzId = "UTC";
+        // }
+
+        var kind = DateTimeKind.Unspecified;
+        if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase))
         {
-            // Definitely local
-            value = DateTime.SpecifyKind(value, DateTimeKind.Local);
+            TzId = "UTC";
+            kind = DateTimeKind.Utc;
+        }
+        else
+        {
             TzId = tzId;
         }
-        else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || value.Kind == DateTimeKind.Utc)
-        {
-            // Probably UTC
-            value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            TzId = "UTC";
-        }
 
-        Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Kind);
+        Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, kind);
         HasDate = true;
         HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
         AssociatedObject = cal;
@@ -379,15 +390,24 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
         // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
         var originalTzId = string.IsNullOrWhiteSpace(TzId)
-            ? TimeZoneInfo.Local.Id
+            ? DateUtil.GetLocalIanaTimeZone()
             : TzId;
 
-        var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
-        var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
+        var converted = ConvertTime(Value, originalTzId, tzId);
+        return new CalDateTime(converted, tzId);
 
-        return converted.Zone == DateTimeZone.Utc
-            ? new CalDateTime(converted.ToDateTimeUtc(), tzId)
-            : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
+        // var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
+        // var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
+        // return converted.Kind == DateTimeKind.Utc
+        //     ? new CalDateTime(converted, tzId)
+        //     : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
+    }
+
+    public static DateTime ConvertTime(DateTime dt, string sourceTz, string destTz)
+    {
+        var sourceZone = TimeZoneInfo.FindSystemTimeZoneById(sourceTz);
+        var destZone = TimeZoneInfo.FindSystemTimeZoneById(destTz);
+        return TimeZoneInfo.ConvertTime(dt, sourceZone, destZone);
     }
 
     /// <summary>
