@@ -13,9 +13,9 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public sealed class CalDateTime : EncodableDataType, IDateTime
 {
-    public static CalDateTime Now => new CalDateTime(DateTime.Now);
+    public static CalDateTime Now => new(DateTime.Now);
 
-    public static CalDateTime Today => new CalDateTime(DateTime.Today);
+    public static CalDateTime Today => new(DateTime.Today);
 
     private bool _hasDate;
     private bool _hasTime;
@@ -27,7 +27,14 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         Initialize(value.Value, value.TzId, null);
     }
 
-    public CalDateTime(DateTime value) : this(value, null) { }
+    public CalDateTime(DateTime value)
+    {
+        var tzId = value.Kind == DateTimeKind.Utc
+            ? "UTC"
+            : null;
+
+        Initialize(value, tzId, null);
+    }
 
     /// <summary>
     /// Specifying a `tzId` value may override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
@@ -73,19 +80,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     private void Initialize(DateTime value, string tzId, Calendar cal)
     {
-        // if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
-        // {
-        //     // Definitely local
-        //     value = DateTime.SpecifyKind(value, DateTimeKind.Local);
-        //     TzId = tzId;
-        // }
-        // else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || value.Kind == DateTimeKind.Utc)
-        // {
-        //     // Probably UTC
-        //     value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-        //     TzId = "UTC";
-        // }
-
         var kind = DateTimeKind.Unspecified;
         if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase))
         {
@@ -221,7 +215,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         return copy;
     }
 
-    public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
+    public static implicit operator CalDateTime(DateTime left) => new(left);
 
     /// <summary>
     /// Converts the date/time to the date/time of the computer running the program. If the DateTimeKind is Unspecified, it's assumed that the underlying

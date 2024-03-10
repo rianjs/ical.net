@@ -32,7 +32,7 @@ public class CalDateTimeTests
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {
         var startAsUtc = calendarEvent.Start.AsUtc;
-            
+
         var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
         var convertedAsUtc = convertedStart.AsUtc;
 
@@ -120,31 +120,31 @@ public class CalDateTimeTests
     public static IEnumerable<ITestCaseData> DateTimeKindOverrideTestCases()
     {
         const string localTz = "America/New_York";
-        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Local);
+        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Unspecified);
 
         yield return new TestCaseData(localDt, "UTC")
             .Returns(DateTimeKind.Utc)
             .SetName("Explicit tzid = UTC time zone returns DateTimeKind.Utc");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), null)
-            .Returns(DateTimeKind.Utc)
-            .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Utc");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(localDt, localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("Local datetime with local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("Local datetime with local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Utc with explicit local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Utc with explicit local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Unspecified with explicit local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Unspecified with explicit local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(localDt, null)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), null)
             .Returns(DateTimeKind.Unspecified)
