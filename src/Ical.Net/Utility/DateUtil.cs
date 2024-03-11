@@ -25,11 +25,7 @@ internal static class DateUtil
         {
             return dt.Value.ToUniversalTime();
         }
-        if (dt.IsUtc)
-        {
-            return dt.Value.ToLocalTime();
-        }
-        return dt.Value;
+        return dt.IsUtc ? dt.Value.ToLocalTime() : dt.Value;
     }
 
     public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
@@ -167,54 +163,31 @@ internal static class DateUtil
 
         throw new ArgumentException($"Unrecognized time zone id {tzId}");
     }
-    
-    
 
-    public static TimeZoneInfo GetTimeZone(string tzId)
+    public static DateTime ConvertToTimeZone(this DateTime dt, string sourceTz, string destTz)
     {
-        return string.IsNullOrWhiteSpace(tzId)
-            ? TimeZoneInfo.Local
-            : TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        var safe = DateTime.SpecifyKind(dt, DateTimeKind.Unspecified);
+        var sourceTzi = TimeZoneInfo.FindSystemTimeZoneById(sourceTz);
+        var destTzi = TimeZoneInfo.FindSystemTimeZoneById(destTz);
+        return TimeZoneInfo.ConvertTime(safe, sourceTzi, destTzi);
     }
 
-    public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
+    public static DateTimeOffset ToDateTimeOffset(this DateTime dt, string sourceTz)
     {
-        var futureDate = zonedDateTime.Date.PlusYears(years);
-        var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
-            zonedDateTime.Second);
-        var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
-        return zonedFutureDate;
+        var safe = DateTime.SpecifyKind(dt, DateTimeKind.Unspecified);
+        var sourceTzi = TimeZoneInfo.FindSystemTimeZoneById(sourceTz);
+        // TODO: Allow the developer to choose which offset they're referring when "fall back" hours are repeated
+        // var offset = sourceTzi.IsAmbiguousTime(dt)
+        //     ? // ???
+        //     : sourceTzi.GetUtcOffset(dt);
+
+        var offset = sourceTzi.GetUtcOffset(dt);
+        return new DateTimeOffset(safe, offset);
     }
 
-    public static ZonedDateTime AddMonths(ZonedDateTime zonedDateTime, int months)
-    {
-        var futureDate = zonedDateTime.Date.PlusMonths(months);
-        var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
-            zonedDateTime.Second);
-        var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
-        return zonedFutureDate;
-    }
-
-    public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
-    {
-        var zone = GetZone(tzId);
-        var localDt = LocalDateTime.FromDateTime(dateTime); //19:00 UTC
-        var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone); //15:00 Eastern
-        return lenientZonedDateTime;
-    }
-
-    public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, string fromZoneId, string toZoneId)
-        => FromTimeZoneToTimeZone(dateTime, GetZone(fromZoneId), GetZone(toZoneId));
-
-    public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, DateTimeZone fromZone, DateTimeZone toZone)
-    {
-        var oldZone = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(fromZone);
-        var newZone = oldZone.WithZone(toZone);
-        return newZone;
-    }
-
-    public static bool IsSerializationTimeZone(DateTimeZone zone)
-        => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
+    // TODO: Does the BCL support "serialization" time zones?
+    // public static bool IsSerializationTimeZone(DateTimeZone zone)
+    //     => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
     /// <summary>
     /// Truncate to the specified TimeSpan's magnitude. For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)

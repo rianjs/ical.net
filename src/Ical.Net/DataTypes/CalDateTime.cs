@@ -1,6 +1,5 @@
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
-using NodaTime;
 
 namespace Ical.Net.DataTypes;
 
@@ -255,8 +254,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
                 if (!string.IsNullOrWhiteSpace(TzId))
                 {
-                    var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
-                    _asUtc = asLocal.ToDateTimeUtc();
+                    // var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+                    var asUtc = Value.ConvertToTimeZone(TzId, "UTC");
+                    _asUtc = asUtc;
                 }
                 else if(IsUtc || Value.Kind == DateTimeKind.Utc)
                 {
@@ -411,7 +411,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public DateTimeOffset AsDateTimeOffset =>
         string.IsNullOrWhiteSpace(TzId)
             ? new DateTimeOffset(AsSystemLocal)
-            : DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
+            : Value.ToDateTimeOffset(TzId);
 
     public IDateTime Add(TimeSpan ts) => this + ts;
 
