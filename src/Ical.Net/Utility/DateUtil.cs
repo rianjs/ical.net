@@ -83,15 +83,6 @@ internal static class DateUtil
     public static readonly DateTimeZone LocalDateTimeZone
         = DateTimeZoneProviders.Tzdb.GetSystemDefault();
 
-    public static string GetLocalIanaTimeZone()
-    {
-        if (!TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZone.CurrentTimeZone.StandardName, out var iana))
-        {
-            throw new ArgumentException($"{TimeZone.CurrentTimeZone.StandardName} could not be converted to an IANA time zone");
-        }
-        return iana!;
-    }
-
     /// <summary>
     /// Use this method to turn a raw string into a NodaTime DateTimeZone. It searches all time zone providers (IANA, BCL, serialization, etc) to see if
     /// the string matches. If it doesn't, it walks each provider, and checks to see if the time zone the provider knows about is contained within the
@@ -208,4 +199,22 @@ internal static class DateUtil
             : 1;
         return (int) Math.Floor(d.Day / 7.0) + offset;
     }
+
+    public static string GetIanaTimeZone(string tzId)
+        => GetIanaName(TimeZoneInfo.FindSystemTimeZoneById(tzId));
+
+    public static string GetIanaName(TimeZoneInfo tzi)
+    {
+        if (tzi.HasIanaId)
+        {
+            return tzi.Id;
+        }
+
+        return TimeZoneInfo.TryConvertWindowsIdToIanaId(tzi.StandardName, out var maybeIana)
+            ? maybeIana
+            : string.Empty;
+    }
+
+    public static string GetLocalSystemIanaTimeZone()
+        => GetIanaName(TimeZoneInfo.Local);
 }

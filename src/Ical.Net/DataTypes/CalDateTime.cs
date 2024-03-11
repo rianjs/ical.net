@@ -254,7 +254,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
                 if (!string.IsNullOrWhiteSpace(TzId))
                 {
-                    // var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
                     var asUtc = Value.ConvertToTimeZone(TzId, "UTC");
                     _asUtc = asUtc;
                 }
@@ -384,17 +383,11 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
         // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
         var originalTzId = string.IsNullOrWhiteSpace(TzId)
-            ? DateUtil.GetLocalIanaTimeZone()
+            ? DateUtil.GetLocalSystemIanaTimeZone()
             : TzId;
 
-        var converted = ConvertTime(Value, originalTzId, tzId);
+        var converted = Value.ConvertToTimeZone(originalTzId, tzId);
         return new CalDateTime(converted, tzId);
-
-        // var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
-        // var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
-        // return converted.Kind == DateTimeKind.Utc
-        //     ? new CalDateTime(converted, tzId)
-        //     : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
     }
 
     public static DateTime ConvertTime(DateTime dt, string sourceTz, string destTz)
