@@ -18,7 +18,7 @@ public class VTimeZoneTest
     [Test, Category("VTimeZone")]
     public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
     {
-        Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
+        Assert.Throws<ArgumentNullException>(() => CreateTestCalendar("shouldFail"));
     }
 
     [Test, Category("VTimeZone")]
@@ -46,11 +46,11 @@ public class VTimeZoneTest
     [Test, Category("VTimeZone")]
     public void VTimeZoneUsMountainStandardTimeShouldSerializeProperly()
     {
-        var iCal = CreateTestCalendar("US Mountain Standard Time");
+        var iCal = CreateTestCalendar("Mountain Standard Time");
         var serializer = new CalendarSerializer();
         var serialized = serializer.SerializeToString(iCal);
 
-        Assert.IsTrue(serialized.Contains("TZID:US Mountain Standard Time"), "Time zone not found in serialization");
+        Assert.IsTrue(serialized.Contains("TZID:Mountain Standard Time"), "Time zone not found in serialization");
         Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"));
         Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"));
         Assert.IsTrue(serialized.Contains("X-LIC-LOCATION"), "X-LIC-LOCATION was not serialized");
@@ -98,7 +98,7 @@ public class VTimeZoneTest
         Assert.IsTrue(serialized.Contains("TZNAME:MSD"), "MSD was not serialized");
         Assert.IsTrue(serialized.Contains("TZNAME:MSK"), "MSK info was not serialized");
         Assert.IsTrue(serialized.Contains("TZNAME:MSD"), "MSD was not serialized");
-        Assert.IsTrue(serialized.Contains("TZNAME:MST"), "MST was not serialized");
+        Assert.IsTrue(serialized.Contains("TZNAME:Mountain Standard Time"), "MST was not serialized");
         Assert.IsTrue(serialized.Contains("TZNAME:MMT"), "MMT was not serialized");
         Assert.IsTrue(serialized.Contains("TZOFFSETFROM:+023017"), "TZOFFSETFROM:+023017 was not serialized");
         Assert.IsTrue(serialized.Contains("TZOFFSETTO:+023017"), "TZOFFSETTO:+023017 was not serialized");
@@ -191,7 +191,7 @@ public class VTimeZoneTest
         Assert.IsTrue(serialized.Contains("DTSTART:19320401T000000"), "DTSTART:19320401T000000 was not serialized");
         Assert.IsTrue(serialized.Contains("DTSTART:20080624T000000"), "DTSTART:20080624T000000 was not serialized");
         Assert.IsTrue(serialized.Contains("DTSTART:19501201T000000"), "DTSTART:19501201T000000 was not serialized");
-            
+
         // Should not contain the following
         Assert.IsFalse(serialized.Contains("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
     }
@@ -217,10 +217,7 @@ public class VTimeZoneTest
     {
         var iCal = new Calendar();
 
-        if (earliestTime == null)
-        {
-            earliestTime = new DateTime(1900, 1, 1);
-        }
+        earliestTime ??= new DateTime(1900, 1, 1);
         iCal.AddTimeZone(tzId, earliestTime.Value, includeHistoricalData);
 
         var calEvent = new CalendarEvent

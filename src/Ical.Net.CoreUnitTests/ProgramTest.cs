@@ -18,7 +18,7 @@ public class ProgramTest
         Assert.IsNotNull(iCal, "iCalendar did not load.");
     }
 
-    private const string _tzid = "US-Eastern";
+    private const string _tzid = "America/New_York";
 
     public static void TestCal(Calendar cal)
     {
@@ -66,16 +66,16 @@ public class ProgramTest
 
         var timeZones = new[]
         {
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern"
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
         };
 
         for (var i = 0; i < dateTimes.Length; i++)
@@ -84,8 +84,8 @@ public class ProgramTest
             var start = occurrences[i].Period.StartTime;
             Assert.AreEqual(dt, start);
 
-            var expectedZone = DateUtil.GetZone(dt.TimeZoneName);
-            var actualZone = DateUtil.GetZone(timeZones[i]);
+            var expectedZone = DateUtil.GetNodaZone(dt.TimeZoneName);
+            var actualZone = DateUtil.GetNodaZone(timeZones[i]);
 
             //Assert.AreEqual();
 
@@ -126,24 +126,24 @@ public class ProgramTest
 
         var timeZones1 = new[]
         {
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",                
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern",
-            "US-Eastern"
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
+            "America/New_York",
         };
 
         for (var i = 0; i < dateTimes1.Length; i++)
@@ -160,7 +160,7 @@ public class ProgramTest
     [Test]
     public void SystemTimeZone3()
     {
-        // Per Jon Udell's test, we should be able to get all 
+        // Per Jon Udell's test, we should be able to get all
         // system time zones on the machine and ensure they
         // are properly translated.
         var zones = TimeZoneInfo.GetSystemTimeZones();
@@ -168,11 +168,11 @@ public class ProgramTest
         {
             try
             {
-                TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                TimeZoneInfo.FindSystemTimeZoneById(zone.Id);
             }
             catch (Exception)
             {
-                Assert.Fail("Not found: " + zone.StandardName);                    
+                Assert.Fail("Not found: " + zone.StandardName);
             }
         }
     }

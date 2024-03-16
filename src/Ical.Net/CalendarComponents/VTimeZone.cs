@@ -20,24 +20,32 @@ public class VTimeZone : CalendarComponent
     public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
 
-    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(tzinfo.Id, earlistDateTimeToSupport, includeHistoricalData);
+    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(tzinfo.Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromDateTimeZone(string tzId)
         => FromDateTimeZone(tzId, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
 
-    public static VTimeZone FromDateTimeZone(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+    public static VTimeZone FromDateTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
         var vTimeZone = new VTimeZone(tzId);
 
         var earliestYear = 1900;
         // Support date/times for January 1st of the previous year by default.
-        if (earlistDateTimeToSupport.Year > 1900)
+        if (earliestDateTimeToSupport.Year > 1900)
         {
-            earliestYear = earlistDateTimeToSupport.Year - 1;
+            earliestYear = earliestDateTimeToSupport.Year - 1;
         }
-        var earliest = Instant.FromUtc(earliestYear, earlistDateTimeToSupport.Month,
-            earlistDateTimeToSupport.Day, earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
+
+        // Derive a UTC basis for "earliest"
+        // get the intervals that the times change between "earliest" and <when>?
+        var earliestUtc = new DateTimeOffset(earliestYear, earliestDateTimeToSupport.Month, earliestDateTimeToSupport.Day, earliestDateTimeToSupport.Hour,
+            earliestDateTimeToSupport.Minute, 0, TimeSpan.Zero);
+        var bclTzi = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        var bclIntervals = bclTzi.GetAdjustmentRules();
+
+        var earliest = Instant.FromUtc(earliestYear, earliestDateTimeToSupport.Month,
+            earliestDateTimeToSupport.Day, earliestDateTimeToSupport.Hour, earliestDateTimeToSupport.Minute);
 
         // Only include historical data if asked to do so.  Otherwise,
         // use only the most recent adjustment rules available.
@@ -60,6 +68,7 @@ public class VTimeZone : CalendarComponent
                 savings: Offset.Zero);
             intervals.Add(interval);
             var zoneInfo = CreateTimeZoneInfo(intervals, new List<ZoneInterval>(), true, true);
+            zoneInfo.TimeZoneName = tzId;
             vTimeZone.AddChild(zoneInfo);
         }
         else
@@ -70,6 +79,7 @@ public class VTimeZone : CalendarComponent
             var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
             matchingStandardIntervals = GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
             var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
+            latestStandardTimeZoneInfo.TimeZoneName = tzId;
             vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
             // check to see if there is no active, future daylight savings (ie, America/Phoenix)
@@ -83,6 +93,7 @@ public class VTimeZone : CalendarComponent
                     var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
                     matchingDaylightIntervals = GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
                     var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
+                    latestDaylightTimeZoneInfo.TimeZoneName = tzId;
                     vTimeZone.AddChild(latestDaylightTimeZoneInfo);
                 }
             }
@@ -271,10 +282,11 @@ public class VTimeZone : CalendarComponent
         }
 
         TzId = tzId;
-        Location = _nodaZone.Id;
+        Location = DateUtil.GetTimeZone(tzId).Id;
     }
 
     private DateTimeZone _nodaZone;
+    private TimeZoneInfo _bclZone;
     private string _tzId;
     public virtual string TzId
     {
@@ -289,7 +301,7 @@ public class VTimeZone : CalendarComponent
         }
         set
         {
-            if (string.Equals(_tzId, value, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(_tzId, value, StringComparison.Ordinal))
             {
                 return;
             }
@@ -300,21 +312,31 @@ public class VTimeZone : CalendarComponent
                 Properties.Remove("TZID");
             }
 
-            _nodaZone = DateUtil.GetZone(value, useLocalIfNotFound: false);
-            var id = _nodaZone.Id;
-            if (string.IsNullOrWhiteSpace(id))
+            _bclZone = DateUtil.GetTimeZone(value!);
+            _nodaZone = DateUtil.GetNodaZone(value, useLocalIfNotFound: false);
+            // var id = _bclZone.Id;
+            // var id = _bclZone.GetIanaName();
+            // if (string.IsNullOrWhiteSpace(id))
+            // {
+            //     throw new ArgumentException($"Unrecognized time zone id: {value}");
+            // }
+
+            if (string.Equals(_bclZone.Id, value, StringComparison.Ordinal))
             {
-                throw new ArgumentException($"Unrecognized time zone id: {value}");
+                return;
             }
 
-            if (!string.Equals(id, value, StringComparison.OrdinalIgnoreCase))
-            {
-                //It was a BCL time zone, so we should use the original value
-                id = value;
-            }
+            _tzId = _bclZone.Id;
+            Properties.Set("TZID", _bclZone.Id);
 
-            _tzId = id;
-            Properties.Set("TZID", value);
+            // if (!string.Equals(_bclZone.Id, value, StringComparison.OrdinalIgnoreCase))
+            // {
+            //     //It was a BCL time zone, so we should use the original value
+            //     id = value;
+            // }
+            //
+            // _tzId = id;
+            // Properties.Set("TZID", value);
         }
     }
 

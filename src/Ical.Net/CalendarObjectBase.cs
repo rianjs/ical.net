@@ -6,8 +6,8 @@ public class CalendarObjectBase : ICopyable, ILoadable
 
     public CalendarObjectBase()
     {
-            _mIsLoaded = true;
-        }
+        _mIsLoaded = true;
+    }
 
     /// <summary>
     /// Copies values from the target object to the
@@ -21,17 +21,17 @@ public class CalendarObjectBase : ICopyable, ILoadable
     /// <returns>The copy of the object.</returns>
     public virtual T Copy<T>()
     {
-            var type = GetType();
-            var obj = Activator.CreateInstance(type) as ICopyable;
+        var type = GetType();
+        var obj = Activator.CreateInstance(type) as ICopyable;
 
-            // Duplicate our values
-            if (obj is T)
-            {
-                obj.CopyFrom(this);
-                return (T) obj;
-            }
-            return default(T);
+        // Duplicate our values
+        if (obj is T)
+        {
+            obj.CopyFrom(this);
+            return (T) obj;
         }
+        return default(T);
+    }
 
     public virtual bool IsLoaded => _mIsLoaded;
 
@@ -39,7 +39,7 @@ public class CalendarObjectBase : ICopyable, ILoadable
 
     public virtual void OnLoaded()
     {
-            _mIsLoaded = true;
-            Loaded?.Invoke(this, EventArgs.Empty);
-        }
+        _mIsLoaded = true;
+        Loaded?.Invoke(this, EventArgs.Empty);
+    }
 }

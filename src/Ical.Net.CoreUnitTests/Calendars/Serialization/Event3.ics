@@ -993,7 +993,7 @@ X-MOZILLA-ALARM-DEFAULT-LENGTH
 LOCATION
  :Daywest
 DESCRIPTION
- :Jo Wojcik will contact me.  I am supposed to e-mail him when I have 
+ :Jo Wojcik will contact me.  I am supposed to e-mail him when I have
  successfully accessed Unitime again after the reinstall of SQL Server.
 END:VEVENT
 BEGIN:VEVENT
@@ -2146,7 +2146,7 @@ DTSTAMP
 UID
  :110672c4-f23f-11da-94de-b42514eaea8c
 SUMMARY
- :Flag resolved items as \"didn't fix this ticket\" when resolved 
+ :Flag resolved items as \"didn't fix this ticket\" when resolved
  tickets are re-opened
 STATUS
  :NEEDS-ACTION
@@ -2327,7 +2327,7 @@ DTSTAMP
 UID
  :98a4d863-f240-11da-9fb2-c3ef9fa64f2e
 SUMMARY
- :Schedule Charge Creation screens\, modified form\, remove option 
+ :Schedule Charge Creation screens\, modified form\, remove option
  for Include Created charges
 STATUS
  :NEEDS-ACTION
@@ -2928,10 +2928,10 @@ UID
 SUMMARY
  :Code Review with Scott Wood
 DTSTART
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060720T173000
 DTEND
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060720T193000
 LOCATION
  :Calendar Systems
@@ -2948,10 +2948,10 @@ UID
 SUMMARY
  :Grooming for Sadie
 DTSTART
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060717T080000
 DTEND
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060717T083000
 LOCATION
  :ERZ
@@ -2972,10 +2972,10 @@ PRIORITY
 CLASS
  :PUBLIC
 DTSTART
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060717T143000
 DTEND
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060717T163000
 LOCATION
  :Daywest
@@ -2998,17 +2998,17 @@ STATUS
 CLASS
  :PUBLIC
 DTSTART
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060718T100000
 DTEND
- ;TZID=/mozilla.org/20050126_1/America/Boise
+ ;TZID=America/Boise
  :20060718T110000
 LOCATION
  :Daywest
 END:VEVENT
 BEGIN:VTIMEZONE
 TZID
- :/mozilla.org/20050126_1/America/Boise
+ :America/Boise
 X-LIC-LOCATION
  :America/Boise
 BEGIN:STANDARD

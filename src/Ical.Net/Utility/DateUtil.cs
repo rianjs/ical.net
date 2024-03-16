@@ -83,16 +83,16 @@ internal static class DateUtil
     public static readonly DateTimeZone LocalDateTimeZone
         = DateTimeZoneProviders.Tzdb.GetSystemDefault();
 
-    /// <summary>
-    /// Use this method to turn a raw string into a NodaTime DateTimeZone. It searches all time zone providers (IANA, BCL, serialization, etc) to see if
-    /// the string matches. If it doesn't, it walks each provider, and checks to see if the time zone the provider knows about is contained within the
-    /// target time zone string. Some older icalendar programs would generate nonstandard time zone strings, and this secondary check works around
-    /// that.
-    /// </summary>
-    /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
-    /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
-    /// Otherwise, it will throw an exception.</param>
-    public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
+    // /// <summary>
+    // /// Use this method to turn a raw string into a NodaTime DateTimeZone. It searches all time zone providers (IANA, BCL, serialization, etc) to see if
+    // /// the string matches. If it doesn't, it walks each provider, and checks to see if the time zone the provider knows about is contained within the
+    // /// target time zone string. Some older icalendar programs would generate nonstandard time zone strings, and this secondary check works around
+    // /// that.
+    // /// </summary>
+    // /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
+    // /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
+    // /// Otherwise, it will throw an exception.</param>
+    public static DateTimeZone GetNodaZone(string tzId, bool useLocalIfNotFound = true)
     {
         if (string.IsNullOrWhiteSpace(tzId))
         {
@@ -135,9 +135,9 @@ internal static class DateUtil
         }
 
         if (_windowsMapping.Value.Keys
-                .Where(tzId.Contains)
-                .Any(providerId => _windowsMapping.Value.TryGetValue(providerId, out ianaZone))
-           )
+            .Where(tzId.Contains)
+            .Any(providerId => _windowsMapping.Value.TryGetValue(providerId, out ianaZone))
+       )
         {
             return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
         }
@@ -167,7 +167,7 @@ internal static class DateUtil
     {
         var safe = DateTime.SpecifyKind(dt, DateTimeKind.Unspecified);
         var sourceTzi = TimeZoneInfo.FindSystemTimeZoneById(sourceTz);
-        // TODO: Allow the developer to choose which offset they're referring when "fall back" hours are repeated
+        // TODO: Allow the developer to choose which offset they're referring to when "fall back" hours are repeated
         // var offset = sourceTzi.IsAmbiguousTime(dt)
         //     ? // ???
         //     : sourceTzi.GetUtcOffset(dt);
@@ -175,10 +175,6 @@ internal static class DateUtil
         var offset = sourceTzi.GetUtcOffset(dt);
         return new DateTimeOffset(safe, offset);
     }
-
-    // TODO: Does the BCL support "serialization" time zones?
-    // public static bool IsSerializationTimeZone(DateTimeZone zone)
-    //     => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
     /// <summary>
     /// Truncate to the specified TimeSpan's magnitude. For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)
@@ -201,9 +197,29 @@ internal static class DateUtil
     }
 
     public static string GetIanaTimeZone(string tzId)
-        => GetIanaName(TimeZoneInfo.FindSystemTimeZoneById(tzId));
+    {
+        return GetIanaName(TimeZoneInfo.FindSystemTimeZoneById(tzId));
+    }
 
-    public static string GetIanaName(TimeZoneInfo tzi)
+    public static TimeZoneInfo GetTimeZone(string tzId)
+    {
+        // Only in .NET 8:
+        // Location = TimeZoneInfo.TryFindSystemTimeZoneById(tzId, out var tzi)
+        //     ? tzi.Id
+        //     : null;
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        }
+        catch (TimeZoneNotFoundException e)
+        {
+            Console.WriteLine(e.Message);
+            // Do something...
+            return null;
+        }
+    }
+
+    public static string GetIanaName(this TimeZoneInfo tzi)
     {
         if (tzi.HasIanaId)
         {

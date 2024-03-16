@@ -390,13 +390,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         return new CalDateTime(converted, tzId);
     }
 
-    public static DateTime ConvertTime(DateTime dt, string sourceTz, string destTz)
-    {
-        var sourceZone = TimeZoneInfo.FindSystemTimeZoneById(sourceTz);
-        var destZone = TimeZoneInfo.FindSystemTimeZoneById(destTz);
-        return TimeZoneInfo.ConvertTime(dt, sourceZone, destZone);
-    }
-
     /// <summary>
     /// Returns a DateTimeOffset representation of the Value. If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
     /// system-local time zone.

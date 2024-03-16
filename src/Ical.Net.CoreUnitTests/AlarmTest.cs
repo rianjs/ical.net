@@ -9,7 +9,7 @@ namespace Ical.Net.CoreUnitTests;
 [TestFixture]
 public class AlarmTest
 {
-    private const string _tzid = "US-Eastern";
+    private const string _tzid = "America/New_York";
 
     public void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
     {

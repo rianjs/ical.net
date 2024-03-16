@@ -19,7 +19,7 @@ namespace Ical.Net.CoreUnitTests;
 [TestFixture]
 public class RecurrenceTests
 {
-    private const string _tzid = "US-Eastern";
+    private const string _tzid = "America/New_York";
 
     private void EventOccurrenceTest(
         Calendar cal,
@@ -57,7 +57,7 @@ public class RecurrenceTests
             Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
             if (timeZones != null)
                 Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-        }            
+        }
     }
 
     private void EventOccurrenceTest(
@@ -155,8 +155,8 @@ public class RecurrenceTests
             {
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
                 Assert.IsTrue(
-                    (dt.LessThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern") ||
-                    (dt.GreaterThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern"),
+                    (dt.LessThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "America/New_York") ||
+                    (dt.GreaterThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "America/New_York"),
                     "Event " + dt + " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
                 i++;
             }
@@ -228,53 +228,53 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -338,7 +338,7 @@ public class RecurrenceTests
     ///     The example was slightly modified to fix a suspected flaw in the design of
     ///     the example RRULEs.  UNTIL is always UTC time, but it expected the actual
     ///     time to correspond to other time zones.  Odd.
-    /// </note>        
+    /// </note>
     /// </summary>
     [Test, Category("Recurrence")]
     public void ByMonth2()
@@ -383,16 +383,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -430,23 +430,23 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -478,17 +478,17 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -584,31 +584,31 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -651,28 +651,28 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -729,16 +729,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -763,10 +763,10 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -797,16 +797,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -833,12 +833,12 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -865,12 +865,12 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -902,16 +902,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -942,16 +942,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -982,16 +982,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1030,24 +1030,24 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1134,16 +1134,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1208,7 +1208,7 @@ public class RecurrenceTests
     }
 
     /// <summary>
-    /// DTSTART;TZID=US-Eastern:19970512T090000
+    /// DTSTART;TZID=America/New_YorkAmerica/New_York:19970512T090000
     /// RRULE:FREQ=YEARLY;BYWEEKNO=20
     /// Includes Monday in week 20 (since 19970512 is a Monday)
     /// of each year.
@@ -1226,15 +1226,15 @@ public class RecurrenceTests
             new[]
             {
                 new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),                    
-                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)                    
+                new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
             },
             null
         );
     }
 
     /// <summary>
-    /// DTSTART;TZID=US-Eastern:20020101T100000
+    /// DTSTART;TZID=America/New_YorkAmerica/New_York:20020101T100000
     /// RRULE:FREQ=YEARLY;BYWEEKNO=1
     /// Ensures that 20021230 part of week 1 in 2002.
     /// See http://lists.calconnect.org/pipermail/caldeveloper-l/2010-April/000042.html
@@ -1300,7 +1300,7 @@ public class RecurrenceTests
     }
 
     /// <summary>
-    /// DTSTART;TZID=US-Eastern:20020101T100000
+    /// DTSTART;TZID=America/New_YorkAmerica/New_York:20020101T100000
     /// RRULE:FREQ=YEARLY;BYWEEKNO=1;BYDAY=MO,TU,WE,TH,FR,SA,SU
     /// Ensures that 20021230 and 20021231 are in week 1.
     /// Also ensures 20011231 is NOT in the result.
@@ -1322,7 +1322,7 @@ public class RecurrenceTests
                 new CalDateTime(2002, 1, 3, 10, 0, 0, _tzid),
                 new CalDateTime(2002, 1, 4, 10, 0, 0, _tzid),
                 new CalDateTime(2002, 1, 5, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),                    
+                new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),
                 new CalDateTime(2002, 12, 30, 10, 0, 0, _tzid),
                 new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid),
                 new CalDateTime(2003, 1, 1, 10, 0, 0, _tzid),
@@ -1423,7 +1423,7 @@ public class RecurrenceTests
 
     /// <summary>
     /// See Page 123 of RFC 2445:
-    /// EXDATE;TZID=US-Eastern:19970902T090000
+    /// EXDATE;TZID=America/New_York:19970902T090000
     /// RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13
     /// </summary>
     [Test, Category("Recurrence")]
@@ -1444,11 +1444,11 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1479,16 +1479,16 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1533,9 +1533,9 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
@@ -1563,19 +1563,19 @@ public class RecurrenceTests
             },
             new[]
             {
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern",
-                "US-Eastern"
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York",
+                "America/New_York"
             }
         );
     }
 
     /// <summary>
-    /// See Page 125 of RFC 2445 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z        
+    /// See Page 125 of RFC 2445 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z
     /// FIXME: The UNTIL time on this item has been altered to 19970902T190000Z to
     /// match the local EDT time occurrence of 3:00pm.  Is the RFC example incorrect?
     /// </summary>
@@ -1978,7 +1978,7 @@ public class RecurrenceTests
         {
             Assert.IsInstanceOf<ArgumentException>(e);
         }
-            
+
     }
 
     /// <summary>
@@ -2085,7 +2085,7 @@ public class RecurrenceTests
                 // after the start of the evaluation period.
                 // See bug #3007244.
                 // https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
-                new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), 
+                new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid),
                 new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid),
                 new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid)
             },
@@ -2169,7 +2169,7 @@ public class RecurrenceTests
                 new CalDateTime(2007, 4, 10, 23, 0, 0)
             },
             null
-        );            
+        );
     }
 
     /// <summary>
@@ -2532,7 +2532,7 @@ public class RecurrenceTests
             new CalDateTime(2010, 2, 1, 0, 0, 0, localTzid),
             new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
             new[]
-            {                    
+            {
                 new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
                 new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
                 new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
@@ -2571,7 +2571,7 @@ public class RecurrenceTests
             eventIndex: 0
         );
     }
-        
+
     /// <summary>
     /// Tests bug BYWEEKNO not working
     /// </summary>
@@ -2606,7 +2606,7 @@ public class RecurrenceTests
         Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
         Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
     }
-        
+
     [Test, Category("Recurrence")]
     public void ReccurencePattern_MaxDate_StopsOnCount()
     {
@@ -2661,7 +2661,7 @@ public class RecurrenceTests
             var rp = (RecurrencePattern)serializer.Deserialize(sr);
             var rpe = new RecurrencePatternEvaluator(rp);
             var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
-                
+
             var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
             Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
@@ -2805,8 +2805,8 @@ public class RecurrenceTests
         Assert.IsNotNull(evaluator);
 
         var occurrences = evaluator.Evaluate(
-                startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                startDate,
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false)
             .OrderBy(o => o.StartTime)
@@ -2835,8 +2835,8 @@ public class RecurrenceTests
         Assert.IsNotNull(evaluator);
 
         var occurrences = evaluator.Evaluate(
-            startDate, 
-            DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+            startDate,
+            DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
             DateUtil.SimpleDateTimeToMatch(toDate, startDate),
             false);
         Assert.AreNotEqual(0, occurrences.Count);
@@ -2851,7 +2851,7 @@ public class RecurrenceTests
         evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
         evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
         evt.Summary = "xxxxxxxxxxxxx";
- 
+
         var previousDateAndTime = new CalDateTime(2009, 11, 17, 0, 15, 0);
         var previousDateOnly = new CalDateTime(2009, 11, 17, 23, 15, 0);
         var laterDateOnly = new CalDateTime(2009, 11, 19, 3, 15, 0);
@@ -2870,7 +2870,7 @@ public class RecurrenceTests
         occurrences = evt.GetOccurrences(laterDateAndTime, end);
         Assert.AreEqual(3, occurrences.Count);
 
-        // Add ByHour "9" and "12"            
+        // Add ByHour "9" and "12"
         evt.RecurrenceRules[0].ByHour.Add(9);
         evt.RecurrenceRules[0].ByHour.Add(12);
 
@@ -2948,7 +2948,7 @@ public class RecurrenceTests
         // Add the exception dates
         var periods = evaluator.Evaluate(
                 evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart), 
+                DateUtil.GetSimpleDateTimeData(evtStart),
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
                 false)
             .OrderBy(p => p.StartTime)
@@ -3002,12 +3002,12 @@ END:VCALENDAR";
 PRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN
 VERSION:2.0
 BEGIN:VEVENT
-DTSTART;TZID=US-Eastern:20160829T080000
-DTEND;TZID=US-Eastern:20160829T090000
-EXDATE;TZID=US-Eastern:20160830T080000
-EXDATE;TZID=US-Eastern:20160831T080000
-RDATE;TZID=US-Eastern:20160830T100000
-RDATE;TZID=US-Eastern:20160831T100000
+DTSTART;TZID=America/New_York:20160829T080000
+DTEND;TZID=America/New_York:20160829T090000
+EXDATE;TZID=America/New_York:20160830T080000
+EXDATE;TZID=America/New_York:20160831T080000
+RDATE;TZID=America/New_York:20160830T100000
+RDATE;TZID=America/New_York:20160831T100000
 RRULE:FREQ=DAILY
 UID:abab717c-1786-4efc-87dd-6859c2b48eb6
 END:VEVENT

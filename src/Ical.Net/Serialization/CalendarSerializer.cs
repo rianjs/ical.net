@@ -30,8 +30,8 @@ public class CalendarSerializer : ComponentSerializer
             return base.SerializeToString(calendar);
         }
 
-        return base.SerializeToString(obj);
-        }
+    return base.SerializeToString(obj);
+    }
 
     public override object Deserialize(TextReader tr) => null;
 
